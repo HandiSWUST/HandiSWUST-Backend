@@ -98,7 +98,7 @@ public class CourseServiceImpl implements CourseService {
         return lessonsArray;
     }
 
-    @Cacheable(value = "Course", key = "'c'+#p2", unless = "null == #result")
+    @Cacheable(value = "Course", key = "'a'+#p2", unless = "null == #result")
     @Override
     public String course(List<String> cookies, HttpSession session, long no) {
         restTemplate = (RestTemplate) session.getAttribute("template");
