@@ -3,6 +3,7 @@ package org.shirakawatyu.handixikebackend.controller;
 import org.shirakawatyu.handixikebackend.service.CourseService;
 import org.shirakawatyu.handixikebackend.utils.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -21,7 +22,8 @@ public class CourseController {
         if(session.getAttribute("status") == null) {
             return "3401 LOGOUT";
         }
-        return courseService.course(ArrayUtils.arrayToList((Object[]) session.getAttribute("cookies")), session);
+        long no = Long.parseLong((String) session.getAttribute("no"));
+        return courseService.course(ArrayUtils.arrayToList((Object[]) session.getAttribute("cookies")), session, no);
     }
 
     @GetMapping("/api/course/cur")
@@ -37,6 +39,8 @@ public class CourseController {
         }catch (Exception e) {
             return "3401 LOGOUT";
         }
-        return courseService.courseCurWeek(list, session);
+//        Object no1 = session.getAttribute("no");
+        long no = Long.parseLong((String) session.getAttribute("no"));
+        return courseService.courseCurWeek(list, session, no);
     }
 }

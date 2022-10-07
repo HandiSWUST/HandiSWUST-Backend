@@ -46,6 +46,9 @@ public class ScoreServiceImpl implements ScoreService {
         JSONObject jsonObject = JSONObject.parseObject(entity.getBody());
         HashMap<String, ArrayList<Object>>map = new HashMap<>();
         JSONObject body = (JSONObject)jsonObject.get("body");
+        if(body == null) {
+            return "";
+        }
         String result = body.get("result").toString();
         JSONArray jsonArray = JSONObject.parseArray(result);
         for(Object s : jsonArray.toArray()){

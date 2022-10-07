@@ -13,6 +13,7 @@ import org.shirakawatyu.handixikebackend.service.CourseService;
 import org.shirakawatyu.handixikebackend.utils.LessonUtils;
 import org.shirakawatyu.handixikebackend.utils.Requests;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -97,8 +98,9 @@ public class CourseServiceImpl implements CourseService {
         return lessonsArray;
     }
 
+    @Cacheable(value = "Course", key = "'c'+#p2", unless = "null == #result")
     @Override
-    public String course(List<String> cookies, HttpSession session) {
+    public String course(List<String> cookies, HttpSession session, long no) {
         restTemplate = (RestTemplate) session.getAttribute("template");
         JSONArray lessonsArray = getRawCourse(cookies);
         // 对节数大于2的课以及重课处理
@@ -107,8 +109,9 @@ public class CourseServiceImpl implements CourseService {
         return lessonsArray.toJSONString();
     }
 
+    @Cacheable(value = "Course", key = "'c'+#p2", unless = "null == #result")
     @Override
-    public String courseCurWeek(List<String> cookies, HttpSession session) {
+    public String courseCurWeek(List<String> cookies, HttpSession session, long no) {
         restTemplate = (RestTemplate) session.getAttribute("template");
         JSONArray lessonsArray = getRawCourse(cookies);
         int size = lessonsArray.size();

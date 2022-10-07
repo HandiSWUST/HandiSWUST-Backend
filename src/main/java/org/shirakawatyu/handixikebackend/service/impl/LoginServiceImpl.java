@@ -107,6 +107,7 @@ public class LoginServiceImpl implements LoginService {
         if(entity != null && entity.getBody() != null && entity.getBody().contains("西南科技大学学生实践教学自助学习系统")) {
             session.setAttribute("status", true);
             session.setAttribute("cookieStore", cookieStore);
+            session.setAttribute("no", username);
             return "1200 LOGIN SUCCESS";
         }
         return "1500 LOGIN FAIL";
