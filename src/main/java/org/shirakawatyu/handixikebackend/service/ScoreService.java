@@ -6,5 +6,5 @@ import javax.servlet.http.HttpSession;
 import java.util.List;
 
 public interface ScoreService {
-    public String getScore(List<String> cookies,HttpSession session) throws CircularRedirectException;
+    public String getScore(HttpSession session) throws CircularRedirectException;
 }

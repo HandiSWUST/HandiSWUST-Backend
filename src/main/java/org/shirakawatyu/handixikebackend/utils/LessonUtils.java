@@ -86,8 +86,8 @@ public class LessonUtils {
         return new String[]{week, weekday, sectionStart, sectionEnd, section};
     }
 
-    public static boolean isCurWeek(String week) {
-        int curWeek = Integer.parseInt(DateUtil.curWeek());
+    public static boolean isCurWeek(String week, int curWeek) {
+//        int curWeek = Integer.parseInt(DateUtil.curWeek());
         if(week.contains("-")) {
             String[] strings = week.split("-");
             if(strings.length == 2) {
@@ -97,6 +97,35 @@ public class LessonUtils {
             return curWeek == Integer.parseInt(week);
         }
         return false;
+    }
+
+    public static void onlySelectWeek(int selectedWeek, JSONArray lessonsArray) {
+        int size = lessonsArray.size();
+        for (int i = 0; i < size; ) {
+            boolean ifPlus = true;
+            String week = lessonsArray.getJSONObject(i).getString("week");
+            if(week.contains(",")) {
+                String[] split = week.split(",");
+                boolean flag = false;
+                for (int j = 0; j < split.length; j++) {
+                    flag = LessonUtils.isCurWeek(split[j], selectedWeek);
+                }
+                if(!flag) {
+                    lessonsArray.remove(i);
+                    size--;
+                    ifPlus = false;
+                }
+            }else {
+                if(!LessonUtils.isCurWeek(week, selectedWeek)) {
+                    lessonsArray.remove(i);
+                    size--;
+                    ifPlus = false;
+                }
+            }
+            if(ifPlus) {
+                i++;
+            }
+        }
     }
 
     public static void process(JSONArray lessonsArray) {

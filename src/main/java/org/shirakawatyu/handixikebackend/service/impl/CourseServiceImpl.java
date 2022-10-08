@@ -2,7 +2,6 @@ package org.shirakawatyu.handixikebackend.service.impl;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
-import com.alibaba.fastjson2.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -10,9 +9,10 @@ import org.jsoup.select.Elements;
 import org.shirakawatyu.handixikebackend.common.Const;
 import org.shirakawatyu.handixikebackend.pojo.Lesson;
 import org.shirakawatyu.handixikebackend.service.CourseService;
+import org.shirakawatyu.handixikebackend.utils.DateUtil;
 import org.shirakawatyu.handixikebackend.utils.LessonUtils;
 import org.shirakawatyu.handixikebackend.utils.Requests;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -30,16 +30,16 @@ public class CourseServiceImpl implements CourseService {
     RestTemplate restTemplate;
 
     @Override
-    public JSONArray getRawCourse(List<String> cookies) {
-        Requests.get("http://202.115.175.175/swust", "", cookies, restTemplate);
-        Requests.get("http://202.115.175.175/aexp/stuIndex.jsp", "http://202.115.175.175/aexp/stuLeft.jsp", cookies, restTemplate);
-        Requests.get("http://202.115.175.175/teachn/teachnAction/index.action", "http://202.115.175.175/aexp/stuLeft.jsp", cookies, restTemplate);
+    public JSONArray getRawCourse() {
+        Requests.get("http://202.115.175.175/swust", "", restTemplate);
+        Requests.get("http://202.115.175.175/aexp/stuIndex.jsp", "http://202.115.175.175/aexp/stuLeft.jsp", restTemplate);
+        Requests.get("http://202.115.175.175/teachn/teachnAction/index.action", "http://202.115.175.175/aexp/stuLeft.jsp", restTemplate);
 
         // 构造表单并拿到一般课表
         MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
         map.add("op", "getJwTimeTable");
         map.add("time", Long.toString(System.currentTimeMillis()));
-        ResponseEntity<String> entity = Requests.post("http://202.115.175.175/teachn/stutool", cookies, map, restTemplate);
+        ResponseEntity<String> entity = Requests.post("http://202.115.175.175/teachn/stutool",map, restTemplate);
 
         // 转码，不然会乱码
         String lessons = new String(entity.getBody().getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
@@ -48,7 +48,7 @@ public class CourseServiceImpl implements CourseService {
         // 拿到实验课表
         // 预请求一次得到页数
         String url = "http://202.115.175.175/teachn/teachnAction/index.action?page.pageNum=2&currTeachCourseCode=&currWeek=&currYearterm=" + Const.CURRENT_TERM;
-        ResponseEntity<String> preGet = Requests.get(url, "http://202.115.175.175/teachn/teachnAction/index.action", cookies, restTemplate);
+        ResponseEntity<String> preGet = Requests.get(url, "http://202.115.175.175/teachn/teachnAction/index.action", restTemplate);
         int allPage = 0;
         try {
             Document preDoc = Jsoup.parse(preGet.getBody());
@@ -61,7 +61,7 @@ public class CourseServiceImpl implements CourseService {
         // 然后循环每一页
         for (int p = 1; p <= allPage; p++) {
             url = "http://202.115.175.175/teachn/teachnAction/index.action?page.pageNum=" + p + "&currTeachCourseCode=&currWeek=&currYearterm=" + Const.CURRENT_TERM;
-            ResponseEntity<String> experiments = Requests.get(url, "http://202.115.175.175/teachn/teachnAction/index.action", cookies, restTemplate);
+            ResponseEntity<String> experiments = Requests.get(url, "http://202.115.175.175/teachn/teachnAction/index.action", restTemplate);
             Document parse = null;
             try {
                 parse = Jsoup.parse(experiments.getBody());
@@ -97,46 +97,33 @@ public class CourseServiceImpl implements CourseService {
         return lessonsArray;
     }
 
+    @Cacheable(value = "Course", key = "'a'+#p1", unless = "null == #result")
     @Override
-    public String course(List<String> cookies, HttpSession session) {
+    public String course(HttpSession session, long no) {
         restTemplate = (RestTemplate) session.getAttribute("template");
-        JSONArray lessonsArray = getRawCourse(cookies);
+        JSONArray lessonsArray = getRawCourse();
         // 对节数大于2的课以及重课处理
         LessonUtils.process(lessonsArray);
 
         return lessonsArray.toJSONString();
     }
 
+    @Cacheable(value = "Course", key = "'c'+#p1", unless = "null == #result")
     @Override
-    public String courseCurWeek(List<String> cookies, HttpSession session) {
+    public String courseCurWeek(HttpSession session, long no) {
         restTemplate = (RestTemplate) session.getAttribute("template");
-        JSONArray lessonsArray = getRawCourse(cookies);
-        int size = lessonsArray.size();
-        for (int i = 0; i < size; ) {
-            boolean ifPlus = true;
-            String week = lessonsArray.getJSONObject(i).getString("week");
-            if(week.contains(",")) {
-                String[] split = week.split(",");
-                boolean flag = false;
-                for (int j = 0; j < split.length; j++) {
-                    flag = LessonUtils.isCurWeek(split[j]);
-                }
-                if(!flag) {
-                    lessonsArray.remove(i);
-                    size--;
-                    ifPlus = false;
-                }
-            }else {
-                if(!LessonUtils.isCurWeek(week)) {
-                    lessonsArray.remove(i);
-                    size--;
-                    ifPlus = false;
-                }
-            }
-            if(ifPlus) {
-                i++;
-            }
-        }
+        JSONArray lessonsArray = getRawCourse();
+        LessonUtils.onlySelectWeek(Integer.parseInt(DateUtil.curWeek()), lessonsArray);
+        LessonUtils.process(lessonsArray);
+        return lessonsArray.toJSONString();
+    }
+
+    @Cacheable(value = "Course", key = "'s'+#p2+'s'+#p1", unless = "null == #result")
+    @Override
+    public String courseSelectedWeek(HttpSession session, long no, int selectedWeek) {
+        restTemplate = (RestTemplate) session.getAttribute("template");
+        JSONArray lessonsArray = getRawCourse();
+        LessonUtils.onlySelectWeek(selectedWeek, lessonsArray);
         LessonUtils.process(lessonsArray);
         return lessonsArray.toJSONString();
     }
