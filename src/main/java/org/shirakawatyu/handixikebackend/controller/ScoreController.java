@@ -22,15 +22,9 @@ public class ScoreController {
     @Autowired
     ScoreService scoreService;
 
-
-    JSONPObject jsonpObject;
     @GetMapping("/api/scores")
     @ResponseBody
     public String scores(HttpSession session) throws CircularRedirectException {
-        if(session.getAttribute("status") == null) {
-            return "3401 LOGOUT";
-        }
-
         return scoreService.getScore(session);
     }
 }

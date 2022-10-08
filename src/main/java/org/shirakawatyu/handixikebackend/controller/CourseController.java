@@ -19,9 +19,6 @@ public class CourseController {
     @GetMapping("/api/course/all")
     @ResponseBody
     public String course(HttpSession session) {
-        if(session.getAttribute("status") == null) {
-            return "3401 LOGOUT";
-        }
         long no = Long.parseLong((String) session.getAttribute("no"));
         return courseService.course(session, no);
     }
@@ -29,32 +26,12 @@ public class CourseController {
     @GetMapping("/api/course/cur")
     @ResponseBody
     public String curCourse(HttpSession session) {
-        if(session.getAttribute("status") == null) {
-            return "3401 LOGOUT";
-        }
-//        Object cookies = session.getAttribute("cookies");
-//        List<String> list = null;
-//        try {
-//            list = ArrayUtils.arrayToList((Object[]) cookies);
-//        }catch (Exception e) {
-//            return "3401 LOGOUT";
-//        }
         long no = Long.parseLong((String) session.getAttribute("no"));
         return courseService.courseCurWeek(session, no);
     }
     @GetMapping("/api/course/select/{selectedWeek}")
     @ResponseBody
     public String selectedCourse(@PathVariable int selectedWeek, HttpSession session) {
-        if(session.getAttribute("status") == null) {
-            return "3401 LOGOUT";
-        }
-        Object cookies = session.getAttribute("cookies");
-//        List<String> list = null;
-//        try {
-//            list = ArrayUtils.arrayToList((Object[]) cookies);
-//        }catch (Exception e) {
-//            return "3401 LOGOUT";
-//        }
         long no = Long.parseLong((String) session.getAttribute("no"));
         return courseService.courseSelectedWeek(session, no, selectedWeek);
     }
