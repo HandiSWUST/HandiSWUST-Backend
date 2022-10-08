@@ -1,5 +1,6 @@
 package org.shirakawatyu.handixikebackend.service.impl;
 
+import io.lettuce.core.RedisClient;
 import org.apache.http.client.CircularRedirectException;
 import org.apache.http.client.CookieStore;
 import org.apache.http.impl.client.BasicCookieStore;
@@ -11,6 +12,8 @@ import org.shirakawatyu.handixikebackend.service.LoginService;
 import org.shirakawatyu.handixikebackend.utils.ArrayUtils;
 import org.shirakawatyu.handixikebackend.utils.Requests;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -21,17 +24,16 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import javax.servlet.http.HttpSession;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Service
 public class LoginServiceImpl implements LoginService {
 
     RestTemplate restTemplate;
     BasicCookieStore cookieStore;
-
+    @Autowired
+    StringRedisTemplate redisTemplate;
     int count = 1;
 
     @Override
@@ -112,6 +114,8 @@ public class LoginServiceImpl implements LoginService {
             session.setAttribute("status", true);
             session.setAttribute("cookieStore", cookieStore);
             session.setAttribute("no", username);
+            // 统计每日登录人次
+            redisTemplate.opsForValue().increment(new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
             return "1200 LOGIN SUCCESS";
         }
         return "1500 LOGIN FAIL";
