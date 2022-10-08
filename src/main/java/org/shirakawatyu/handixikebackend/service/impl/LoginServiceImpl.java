@@ -115,7 +115,7 @@ public class LoginServiceImpl implements LoginService {
             session.setAttribute("cookieStore", cookieStore);
             session.setAttribute("no", username);
             // 统计每日登录人次
-            redisTemplate.opsForValue().increment(new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
+            redisTemplate.opsForHash().increment("count", new SimpleDateFormat("yyyy-MM-dd").format(new Date()), 1);
             return "1200 LOGIN SUCCESS";
         }
         return "1500 LOGIN FAIL";
