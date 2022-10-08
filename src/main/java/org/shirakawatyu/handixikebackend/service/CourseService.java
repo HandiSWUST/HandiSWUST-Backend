@@ -7,8 +7,8 @@ import javax.servlet.http.HttpSession;
 import java.util.List;
 
 public interface CourseService {
-    JSONArray getRawCourse(List<String> cookies);
-    String course(List<String> cookies, HttpSession session, long no);
-    String courseCurWeek(List<String> cookies, HttpSession session, long no);
-    String courseSelectedWeek(List<String> cookies, HttpSession session, long no, int selectedWeek);
+    JSONArray getRawCourse();
+    String course(HttpSession session, long no);
+    String courseCurWeek(HttpSession session, long no);
+    String courseSelectedWeek(HttpSession session, long no, int selectedWeek);
 }

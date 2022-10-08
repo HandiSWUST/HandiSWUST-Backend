@@ -37,11 +37,11 @@ public class ScoreServiceImpl implements ScoreService {
 
     }
     @Override
-    public String getScore(List<String> cookies,HttpSession session) {
+    public String getScore(HttpSession session) {
         restTemplate = (RestTemplate) session.getAttribute("template");
 
-        ResponseEntity<String> entity0 = Requests.get("http://myo.swust.edu.cn/mht_shall/a/service/serviceFrontManage#view_index", "", cookies, restTemplate);
-        ResponseEntity<String> entity = Requests.get("http://myo.swust.edu.cn/mht_shall/a/service/studentMark", "http://myo.swust.edu.cn/mht_shall/a/service/serviceFrontManage#view_index", cookies, restTemplate);
+        ResponseEntity<String> entity0 = Requests.get("http://myo.swust.edu.cn/mht_shall/a/service/serviceFrontManage#view_index", "", restTemplate);
+        ResponseEntity<String> entity = Requests.get("http://myo.swust.edu.cn/mht_shall/a/service/studentMark", "http://myo.swust.edu.cn/mht_shall/a/service/serviceFrontManage#view_index", restTemplate);
 
         JSONObject jsonObject = JSONObject.parseObject(entity.getBody());
         HashMap<String, ArrayList<Object>>map = new HashMap<>();

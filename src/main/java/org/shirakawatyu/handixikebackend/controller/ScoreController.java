@@ -31,6 +31,6 @@ public class ScoreController {
             return "3401 LOGOUT";
         }
 
-        return scoreService.getScore(ArrayUtils.arrayToList((Object[]) session.getAttribute("cookies")),session);
+        return scoreService.getScore(session);
     }
 }

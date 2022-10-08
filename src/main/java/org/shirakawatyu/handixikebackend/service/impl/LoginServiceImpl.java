@@ -36,12 +36,12 @@ public class LoginServiceImpl implements LoginService {
 
     @Override
     public Map<String, String> getKey(HttpSession session) {
-        List<String> cookies = ArrayUtils.arrayToList((Object[]) session.getAttribute("cookies"));
+//        List<String> cookies = ArrayUtils.arrayToList((Object[]) session.getAttribute("cookies"));
         if(this.restTemplate == null) {
             return null;
         }
-        ResponseEntity<String> entity = Requests.get("http://cas.swust.edu.cn/authserver/getKey", "", cookies, restTemplate);
-        session.setAttribute("cookies", cookies.toArray());
+        ResponseEntity<String> entity = Requests.get("http://cas.swust.edu.cn/authserver/getKey", "", restTemplate);
+//        session.setAttribute("cookies", cookies.toArray());
         String text = entity.toString();
         Map<String, String> map = new HashMap<>();
         map.put("modulus", text.substring(17, text.indexOf("\",")));
@@ -54,10 +54,10 @@ public class LoginServiceImpl implements LoginService {
         cookieStore = new BasicCookieStore();
         restTemplate = InitRestTemplate.init(cookieStore);
         ResponseEntity<byte[]> entity = restTemplate.getForEntity("http://cas.swust.edu.cn/authserver/captcha", byte[].class);
-        if(entity.getHeaders().get("Set-Cookie") != null) {
-            List<String> cookies = entity.getHeaders().get("Set-Cookie");
-            session.setAttribute("cookies", cookies.toArray());
-        }
+//        if(entity.getHeaders().get("Set-Cookie") != null) {
+//            List<String> cookies = entity.getHeaders().get("Set-Cookie");
+//            session.setAttribute("cookies", cookies.toArray());
+//        }
         byte[] bytes = entity.getBody();
         return Base64.getEncoder().encodeToString(bytes);
     }
@@ -77,7 +77,7 @@ public class LoginServiceImpl implements LoginService {
         if(this.restTemplate == null) {
             return null;
         }
-        List<String> cookies = ArrayUtils.arrayToList((Object[]) session.getAttribute("cookies"));
+//        List<String> cookies = ArrayUtils.arrayToList((Object[]) session.getAttribute("cookies"));
         ResponseEntity<String> res = restTemplate.getForEntity("http://cas.swust.edu.cn/authserver/login?service=http://202.115.175.175/swust/", String.class);
         String execution = null;
         try {
@@ -100,11 +100,11 @@ public class LoginServiceImpl implements LoginService {
 
         ResponseEntity<String> entity = null;
         try {
-            entity = Requests.post("http://cas.swust.edu.cn/authserver/login?service=http://202.115.175.175/swust/", cookies, map, restTemplate);
+            entity = Requests.post("http://cas.swust.edu.cn/authserver/login?service=http://202.115.175.175/swust/", map, restTemplate);
         }catch (Exception e) {
             return "1500 LOGIN FAIL";
         }
-        session.setAttribute("cookies", cookies.toArray());
+//        session.setAttribute("cookies", cookies.toArray());
         session.setAttribute("template", restTemplate);
         count++;
 
@@ -119,9 +119,9 @@ public class LoginServiceImpl implements LoginService {
 
     @Override
     public String logout(HttpSession session) {
-        List<String> cookies = ArrayUtils.arrayToList((Object[]) session.getAttribute("cookies"));
-        Requests.get("http://myo.swust.edu.cn/mht_shall/a/logout", "http://myo.swust.edu.cn/mht_shall/a/service/serviceFrontManage", cookies, restTemplate);
-        session.removeAttribute("cookies");
+//        List<String> cookies = ArrayUtils.arrayToList((Object[]) session.getAttribute("cookies"));
+        Requests.get("http://myo.swust.edu.cn/mht_shall/a/logout", "http://myo.swust.edu.cn/mht_shall/a/service/serviceFrontManage", restTemplate);
+//        session.removeAttribute("cookies");
         session.removeAttribute("status");
         session.removeAttribute("template");
         session.removeAttribute("cookieStore");
