@@ -2,7 +2,6 @@ package org.shirakawatyu.handixikebackend.service.impl;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
-import com.alibaba.fastjson2.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -10,9 +9,9 @@ import org.jsoup.select.Elements;
 import org.shirakawatyu.handixikebackend.common.Const;
 import org.shirakawatyu.handixikebackend.pojo.Lesson;
 import org.shirakawatyu.handixikebackend.service.CourseService;
+import org.shirakawatyu.handixikebackend.utils.DateUtil;
 import org.shirakawatyu.handixikebackend.utils.LessonUtils;
 import org.shirakawatyu.handixikebackend.utils.Requests;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -114,32 +113,17 @@ public class CourseServiceImpl implements CourseService {
     public String courseCurWeek(List<String> cookies, HttpSession session, long no) {
         restTemplate = (RestTemplate) session.getAttribute("template");
         JSONArray lessonsArray = getRawCourse(cookies);
-        int size = lessonsArray.size();
-        for (int i = 0; i < size; ) {
-            boolean ifPlus = true;
-            String week = lessonsArray.getJSONObject(i).getString("week");
-            if(week.contains(",")) {
-                String[] split = week.split(",");
-                boolean flag = false;
-                for (int j = 0; j < split.length; j++) {
-                    flag = LessonUtils.isCurWeek(split[j]);
-                }
-                if(!flag) {
-                    lessonsArray.remove(i);
-                    size--;
-                    ifPlus = false;
-                }
-            }else {
-                if(!LessonUtils.isCurWeek(week)) {
-                    lessonsArray.remove(i);
-                    size--;
-                    ifPlus = false;
-                }
-            }
-            if(ifPlus) {
-                i++;
-            }
-        }
+        LessonUtils.onlySelectWeek(Integer.parseInt(DateUtil.curWeek()), lessonsArray);
+        LessonUtils.process(lessonsArray);
+        return lessonsArray.toJSONString();
+    }
+
+    @Cacheable(value = "Course", key = "'s'+#p3+'s'+#p2", unless = "null == #result")
+    @Override
+    public String courseSelectedWeek(List<String> cookies, HttpSession session, long no, int selectedWeek) {
+        restTemplate = (RestTemplate) session.getAttribute("template");
+        JSONArray lessonsArray = getRawCourse(cookies);
+        LessonUtils.onlySelectWeek(selectedWeek, lessonsArray);
         LessonUtils.process(lessonsArray);
         return lessonsArray.toJSONString();
     }

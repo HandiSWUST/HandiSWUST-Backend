@@ -37,7 +37,9 @@ public class LoginServiceImpl implements LoginService {
     @Override
     public Map<String, String> getKey(HttpSession session) {
         List<String> cookies = ArrayUtils.arrayToList((Object[]) session.getAttribute("cookies"));
-
+        if(this.restTemplate == null) {
+            return null;
+        }
         ResponseEntity<String> entity = Requests.get("http://cas.swust.edu.cn/authserver/getKey", "", cookies, restTemplate);
         session.setAttribute("cookies", cookies.toArray());
         String text = entity.toString();
@@ -72,7 +74,9 @@ public class LoginServiceImpl implements LoginService {
      */
     @Override
     public String login(String username, String password, String captcha, HttpSession session) {
-
+        if(this.restTemplate == null) {
+            return null;
+        }
         List<String> cookies = ArrayUtils.arrayToList((Object[]) session.getAttribute("cookies"));
         ResponseEntity<String> res = restTemplate.getForEntity("http://cas.swust.edu.cn/authserver/login?service=http://202.115.175.175/swust/", String.class);
         String execution = null;

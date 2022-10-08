@@ -39,8 +39,9 @@ public class CourseController {
         }catch (Exception e) {
             return "3401 LOGOUT";
         }
-//        Object no1 = session.getAttribute("no");
         long no = Long.parseLong((String) session.getAttribute("no"));
         return courseService.courseCurWeek(list, session, no);
     }
+
+
 }

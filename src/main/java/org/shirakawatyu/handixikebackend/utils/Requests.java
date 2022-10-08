@@ -27,7 +27,7 @@ public class Requests {
      */
     public static ResponseEntity<String> get(String url, String referer, List<String> cookies, RestTemplate restTemplate) {
         HttpHeaders headers = new HttpHeaders();
-        headers.put(HttpHeaders.COOKIE, cookies);
+//        headers.put(HttpHeaders.COOKIE, cookies);
         headers.setContentType(MediaType.APPLICATION_JSON);
         if(!"".equals(referer)) {
             headers.set("referer", referer);
@@ -36,32 +36,32 @@ public class Requests {
         HttpEntity<MultiValueMap<String, String>> httpEntity1 = new HttpEntity<>(map1, headers);
 
         ResponseEntity<String> get1 = restTemplate.exchange(url, HttpMethod.GET, httpEntity1, String.class);
-        List<String> strings = get1.getHeaders().get("Set-Cookie");
-        if(strings != null) {
-            for (int j = 0; j < strings.size(); j++) {
-                int size = cookies.size();
-                String s = strings.get(j);
-                for (int i = 0; i < size; i++) {
-                    if (cookies.get(i).contains(s.substring(0, s.indexOf("=")))) {
-                        try {
-                            
-                            cookies.remove(i);
-                        }catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                        size--;
-                    }
-                }
-                try{
-                    cookies.add(s);
-                }catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        if(get1.getStatusCode().value() == 302) {
-            return get(url.substring(0, url.indexOf("/", 7)) + get1.getHeaders().getLocation(), "", cookies, restTemplate);
-        }
+//        List<String> strings = get1.getHeaders().get("Set-Cookie");
+//        if(strings != null) {
+//            for (int j = 0; j < strings.size(); j++) {
+//                int size = cookies.size();
+//                String s = strings.get(j);
+//                for (int i = 0; i < size; i++) {
+//                    if (cookies.get(i).contains(s.substring(0, s.indexOf("=")))) {
+//                        try {
+//
+//                            cookies.remove(i);
+//                        }catch (Exception e) {
+//                            e.printStackTrace();
+//                        }
+//                        size--;
+//                    }
+//                }
+//                try{
+//                    cookies.add(s);
+//                }catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }
+//        if(get1.getStatusCode().value() == 302) {
+//            return get(url.substring(0, url.indexOf("/", 7)) + get1.getHeaders().getLocation(), "", cookies, restTemplate);
+//        }
         return get1;
     }
 
@@ -79,32 +79,33 @@ public class Requests {
      */
     public static ResponseEntity<String> post(String url, List<String> cookies, MultiValueMap<String, String> data, RestTemplate restTemplate) {
         HttpHeaders headers = new HttpHeaders();
-        headers.put(HttpHeaders.COOKIE, cookies);
+//        headers.put(HttpHeaders.COOKIE, cookies);
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         HttpEntity<MultiValueMap<String, String>> httpEntity = new HttpEntity<>(data, headers);
         ResponseEntity<String> entity = restTemplate.exchange(url, HttpMethod.POST, httpEntity, String.class);
-        if (entity.getHeaders().get("Set-Cookie") != null) {
-            ArrayList<String> strings = new ArrayList<>();
-            for (String s :
-                    cookies) {
-                strings.add(s);
-            }
-            cookies = strings;
-            List<String> strings1 = entity.getHeaders().get("Set-Cookie");
-            if(strings1 != null) {
-                for (String s : strings1) {
-                    for (String i : cookies) {
-                        if (i.contains(s.substring(0, s.indexOf("=")))) {
-                            cookies.remove(i);
-                        }
-                    }
-                    cookies.add(s);
-                }
-            }
-        }
-        if(entity.getStatusCode().value() == 302) {
-            return get(url.substring(0, url.indexOf("/", 7)) + entity.getHeaders().getLocation(), "", cookies, restTemplate);
-        }
+//        if (entity.getHeaders().get("Set-Cookie") != null) {
+//            ArrayList<String> strings = new ArrayList<>();
+//            for (String s :
+//                    cookies) {
+//                strings.add(s);
+//            }
+//            cookies = strings;
+//            List<String> strings1 = entity.getHeaders().get("Set-Cookie");
+//            if(strings1 != null) {
+//                for (String s : strings1) {
+//                    for (String i : cookies) {
+//                        if (i.contains(s.substring(0, s.indexOf("=")))) {
+//                            cookies.remove(i);
+//                        }
+//                    }
+//                    cookies.add(s);
+//                }
+//            }
+//        }
+//        if(entity.getStatusCode().value() == 302) {
+//            return get(url.substring(0, url.indexOf("/", 7)) + entity.getHeaders().getLocation(), "", cookies, restTemplate);
+//        }
         return entity;
     }
+
 }
