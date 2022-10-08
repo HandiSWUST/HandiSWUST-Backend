@@ -16,9 +16,9 @@ public class LibraryController {
     @Autowired
     LibraryService libraryService;
 
-    @GetMapping("/library")
-    public String getLibraryInfo(HttpSession session){
-        return libraryService.getLibrary (ArrayUtils.arrayToList((Object[]) session.getAttribute("cookies")));
+    @GetMapping("/api/library")
+    public String getLibraryInfo(HttpSession session) throws IOException{
+        return libraryService.getLibrary (session);
 
 
     }
