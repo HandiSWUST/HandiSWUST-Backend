@@ -41,7 +41,7 @@ public class LibraryServiceImpl implements LibraryService {
             try {
                 Connection.Response execute = Jsoup.connect("http://cas.swust.edu.cn/authserver/login?service=http://202.115.162.45:8080/reader/hwthau.php").followRedirects(false).cookies(map).execute();
 
-                System.out.println(execute.headers());
+//                System.out.println(execute.headers());
                 List<String> locations = execute.headers("Location");
                 Connection.Response execute1 = Jsoup.connect(locations.get(0)).followRedirects(false).cookies(map).execute();
                 List<String> headers = execute1.headers("Set-Cookie");
@@ -80,7 +80,7 @@ public class LibraryServiceImpl implements LibraryService {
                     }
 
                 }
-                System.out.println(books);
+//                System.out.println(books);
                 return JSONObject.toJSONString(books);
 
 
