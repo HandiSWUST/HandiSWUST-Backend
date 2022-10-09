@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 
+import org.apache.http.client.CircularRedirectException;
 import org.shirakawatyu.handixikebackend.service.ScoreService;
 import org.shirakawatyu.handixikebackend.utils.Requests;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +43,7 @@ public class ScoreServiceImpl implements ScoreService {
 
         ResponseEntity<String> entity0 = Requests.get("http://myo.swust.edu.cn/mht_shall/a/service/serviceFrontManage#view_index", "", restTemplate);
         ResponseEntity<String> entity = Requests.get("http://myo.swust.edu.cn/mht_shall/a/service/studentMark", "http://myo.swust.edu.cn/mht_shall/a/service/serviceFrontManage#view_index", restTemplate);
-
+        Requests.get("http://myo.swust.edu.cn/mht_shall/a/service/studentInfo","http://myo.swust.edu.cn/mht_shall/a/service/serviceFrontManage#view_index", restTemplate);
         JSONObject jsonObject = JSONObject.parseObject(entity.getBody());
         HashMap<String, ArrayList<Object>>map = new HashMap<>();
         JSONObject body = (JSONObject)jsonObject.get("body");
@@ -65,5 +66,13 @@ public class ScoreServiceImpl implements ScoreService {
         }
 //        System.out.println(map);
         return JSONObject.toJSONString(map);
+    }
+
+    @Override
+    public String getGPA(HttpSession session) throws CircularRedirectException {
+        ResponseEntity<String> entity0 = Requests.get("http://myo.swust.edu.cn/mht_shall/a/service/serviceFrontManage#view_index", "", restTemplate);
+
+        ResponseEntity<String> entity = Requests.get("http://myo.swust.edu.cn/mht_shall/a/service/studentInfo", "http://myo.swust.edu.cn/mht_shall/a/service/serviceFrontManage#view_index", restTemplate);
+        return JSONObject.toJSONString(entity.getBody());
     }
 }

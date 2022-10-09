@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface ScoreService {
     public String getScore(HttpSession session) throws CircularRedirectException;
+
+    public String getGPA(HttpSession session)throws CircularRedirectException;
 }

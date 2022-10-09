@@ -27,4 +27,10 @@ public class ScoreController {
     public String scores(HttpSession session) throws CircularRedirectException {
         return scoreService.getScore(session);
     }
+
+    @GetMapping("/api/gpa")
+    @ResponseBody
+    public String gpa(HttpSession session) throws CircularRedirectException {
+        return scoreService.getGPA(session);
+    }
 }
