@@ -12,6 +12,7 @@ import org.shirakawatyu.handixikebackend.service.LoginService;
 import org.shirakawatyu.handixikebackend.utils.ArrayUtils;
 import org.shirakawatyu.handixikebackend.utils.Requests;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.HttpMethod;
@@ -28,10 +29,11 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
+
 public class LoginServiceImpl implements LoginService {
 
-    RestTemplate restTemplate;
-    BasicCookieStore cookieStore;
+//    RestTemplate restTemplate;
+//    BasicCookieStore cookieStore;
     @Autowired
     StringRedisTemplate redisTemplate;
     int count = 1;
@@ -39,7 +41,8 @@ public class LoginServiceImpl implements LoginService {
     @Override
     public Map<String, String> getKey(HttpSession session) {
 //        List<String> cookies = ArrayUtils.arrayToList((Object[]) session.getAttribute("cookies"));
-        if(this.restTemplate == null) {
+        RestTemplate restTemplate =(RestTemplate)session.getAttribute("template");
+        if(restTemplate == null) {
             return null;
         }
         ResponseEntity<String> entity = Requests.get("http://cas.swust.edu.cn/authserver/getKey", "", restTemplate);
@@ -53,8 +56,11 @@ public class LoginServiceImpl implements LoginService {
 
     @Override
     public String getCaptcha(HttpSession session) {
-        cookieStore = new BasicCookieStore();
-        restTemplate = InitRestTemplate.init(cookieStore);
+        BasicCookieStore cookieStore = new BasicCookieStore();
+
+        RestTemplate restTemplate = InitRestTemplate.init(cookieStore);
+        session.setAttribute("template",restTemplate);
+        session.setAttribute("cookieStore",cookieStore);
         ResponseEntity<byte[]> entity = restTemplate.getForEntity("http://cas.swust.edu.cn/authserver/captcha", byte[].class);
 //        if(entity.getHeaders().get("Set-Cookie") != null) {
 //            List<String> cookies = entity.getHeaders().get("Set-Cookie");
@@ -76,7 +82,9 @@ public class LoginServiceImpl implements LoginService {
      */
     @Override
     public String login(String username, String password, String captcha, HttpSession session) {
-        if(this.restTemplate == null) {
+        RestTemplate restTemplate =(RestTemplate)session.getAttribute("template");
+        CookieStore cookieStore = (CookieStore)session.getAttribute("cookieStore");
+        if(restTemplate == null) {
             return null;
         }
 //        List<String> cookies = ArrayUtils.arrayToList((Object[]) session.getAttribute("cookies"));
@@ -123,6 +131,8 @@ public class LoginServiceImpl implements LoginService {
 
     @Override
     public String logout(HttpSession session) {
+        RestTemplate restTemplate =(RestTemplate)session.getAttribute("template");
+
 //        List<String> cookies = ArrayUtils.arrayToList((Object[]) session.getAttribute("cookies"));
         Requests.get("http://myo.swust.edu.cn/mht_shall/a/logout", "http://myo.swust.edu.cn/mht_shall/a/service/serviceFrontManage", restTemplate);
 //        session.removeAttribute("cookies");

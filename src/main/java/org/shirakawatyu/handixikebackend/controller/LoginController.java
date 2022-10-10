@@ -3,8 +3,11 @@ package org.shirakawatyu.handixikebackend.controller;
 
 import org.shirakawatyu.handixikebackend.service.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.annotation.RequestScope;
+
 import javax.servlet.http.HttpSession;
 import java.util.*;
 /**
@@ -14,12 +17,15 @@ import java.util.*;
  */
 
 @Controller
+@Scope("prototype")
 public class LoginController {
     @Autowired
+
     LoginService loginService;
 
     @GetMapping("/api/key")
     @ResponseBody
+
     public Map<String,String> getKey(HttpSession session) {
         return loginService.getKey(session);
     }
