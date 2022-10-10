@@ -21,16 +21,15 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpSession;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
 
 @Service
 public class CourseServiceImpl implements CourseService {
 
 
-    RestTemplate restTemplate;
+//    RestTemplate restTemplate;
 
     @Override
-    public JSONArray getRawCourse() {
+    public JSONArray getRawCourse(RestTemplate restTemplate) {
         Requests.get("http://202.115.175.175/swust", "", restTemplate);
         Requests.get("http://202.115.175.175/aexp/stuIndex.jsp", "http://202.115.175.175/aexp/stuLeft.jsp", restTemplate);
         Requests.get("http://202.115.175.175/teachn/teachnAction/index.action", "http://202.115.175.175/aexp/stuLeft.jsp", restTemplate);
@@ -100,31 +99,39 @@ public class CourseServiceImpl implements CourseService {
     @Cacheable(value = "Course", key = "'a'+#p1", unless = "null == #result")
     @Override
     public String course(HttpSession session, long no) {
-        restTemplate = (RestTemplate) session.getAttribute("template");
-        JSONArray lessonsArray = getRawCourse();
+//        restTemplate = ;
+        JSONArray lessonsArray = getRawCourse((RestTemplate) session.getAttribute("template"));
         // 对节数大于2的课以及重课处理
         LessonUtils.process(lessonsArray);
-
-        return lessonsArray.toJSONString();
+        if(lessonsArray.size() > 0) {
+            return lessonsArray.toJSONString();
+        }
+        return null;
     }
 
     @Cacheable(value = "Course", key = "'c'+#p1", unless = "null == #result")
     @Override
     public String courseCurWeek(HttpSession session, long no) {
-        restTemplate = (RestTemplate) session.getAttribute("template");
-        JSONArray lessonsArray = getRawCourse();
+//        restTemplate = (RestTemplate) session.getAttribute("template");
+        JSONArray lessonsArray = getRawCourse((RestTemplate) session.getAttribute("template"));
         LessonUtils.onlySelectWeek(Integer.parseInt(DateUtil.curWeek()), lessonsArray);
         LessonUtils.process(lessonsArray);
-        return lessonsArray.toJSONString();
+        if(lessonsArray.size() > 0) {
+            return lessonsArray.toJSONString();
+        }
+        return null;
     }
 
     @Cacheable(value = "Course", key = "'s'+#p2+'s'+#p1", unless = "null == #result")
     @Override
     public String courseSelectedWeek(HttpSession session, long no, int selectedWeek) {
-        restTemplate = (RestTemplate) session.getAttribute("template");
-        JSONArray lessonsArray = getRawCourse();
+//        restTemplate = (RestTemplate) session.getAttribute("template");
+        JSONArray lessonsArray = getRawCourse((RestTemplate) session.getAttribute("template"));
         LessonUtils.onlySelectWeek(selectedWeek, lessonsArray);
         LessonUtils.process(lessonsArray);
-        return lessonsArray.toJSONString();
+        if(lessonsArray.size() > 0) {
+            return lessonsArray.toJSONString();
+        }
+        return null;
     }
 }

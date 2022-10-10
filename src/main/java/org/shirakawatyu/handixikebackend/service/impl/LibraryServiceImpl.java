@@ -22,7 +22,7 @@ import java.util.*;
 @Service
 public class LibraryServiceImpl implements LibraryService {
 
-    RestTemplate restTemplate;
+//    RestTemplate restTemplate;
 
     @Override
     public String getLibrary(HttpSession session)  throws IOException{
@@ -36,7 +36,7 @@ public class LibraryServiceImpl implements LibraryService {
 
 
 
-            restTemplate = (RestTemplate) session.getAttribute("template");
+        RestTemplate restTemplate = (RestTemplate) session.getAttribute("template");
 
             try {
                 Connection.Response execute = Jsoup.connect("http://cas.swust.edu.cn/authserver/login?service=http://202.115.162.45:8080/reader/hwthau.php").followRedirects(false).cookies(map).execute();
