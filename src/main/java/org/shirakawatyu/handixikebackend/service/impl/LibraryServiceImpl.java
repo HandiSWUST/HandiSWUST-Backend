@@ -48,6 +48,7 @@ public class LibraryServiceImpl implements LibraryService {
                 Connection.Response execute1 = Jsoup.connect(locations.get(0)).followRedirects(false).cookies(map).execute();
                 List<String> headers = execute1.headers("Set-Cookie");
             String[] split = headers.get(0).split("=");
+            session.setAttribute("token",split);
             map.put(split[0],split[1]);
             Connection.Response execute2 = Jsoup.connect("http://202.115.162.45:8080/reader/book_lst.php").followRedirects(false).cookies(map).execute();
                 Requests.get("http://202.115.162.45:8080/reader/book_lst.php", "",restTemplate);
@@ -98,5 +99,24 @@ public class LibraryServiceImpl implements LibraryService {
 
 
 
+    }
+
+    @Override
+    public String queryBooks(HttpSession session, String bookName, int page) throws IOException {
+        String[] token = (String[])session.getAttribute("token");
+        String requestBody = "{\"searchWords\":[{\"fieldList\":[{\"fieldCode\":\"\",\"fieldValue\":\""+bookName+"\"}]}],\"filters\":[],\"limiter\":[],\"sortField\":\"relevance\",\"sortType\":\"desc\",\"pageSize\":20,\"pageCount\":"+page+",\"locale\":\"\",\"first\":true}";
+        String url = "http://202.115.162.45:8080/opac/ajax_search_adv.php";
+        Document post = Jsoup.connect(url).header("Content-Type", "application/json").requestBody(requestBody).cookie(token[0], token[1]).post();
+
+        return post.text();
+    }
+
+    @Override
+    public String queryLocation(HttpSession session, String id) throws IOException {
+        String[] token = (String[])session.getAttribute("token");
+        String url = "http://202.115.162.45:8080/opac/ajax_item.php?marc_no="+id;
+        Document document = Jsoup.connect(url).cookie(token[0], token[1]).get();
+
+        return document.body().html();
     }
 }

@@ -6,4 +6,8 @@ import java.util.List;
 
 public interface LibraryService {
     public String getLibrary(HttpSession session) throws IOException;
+
+    public String queryBooks(HttpSession session,String bookName,int page) throws IOException;
+
+    public String queryLocation(HttpSession session,String id) throws IOException;
 }
