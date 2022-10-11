@@ -35,40 +35,54 @@ public class ScoreServiceImpl implements ScoreService {
     @Override
     public String getScore(HttpSession session) {
         RestTemplate restTemplate = (RestTemplate) session.getAttribute("template");
+        try{
 
-        ResponseEntity<String> entity0 = Requests.get("http://myo.swust.edu.cn/mht_shall/a/service/serviceFrontManage#view_index", "", restTemplate);
-        ResponseEntity<String> entity = Requests.get("http://myo.swust.edu.cn/mht_shall/a/service/studentMark", "http://myo.swust.edu.cn/mht_shall/a/service/serviceFrontManage#view_index", restTemplate);
-        Requests.get("http://myo.swust.edu.cn/mht_shall/a/service/studentInfo","http://myo.swust.edu.cn/mht_shall/a/service/serviceFrontManage#view_index", restTemplate);
-        JSONObject jsonObject = JSONObject.parseObject(entity.getBody());
-        HashMap<String, ArrayList<Object>>map = new HashMap<>();
-        JSONObject body = (JSONObject)jsonObject.get("body");
-        if(body == null) {
-            return "";
-        }
-        String result = body.get("result").toString();
-        JSONArray jsonArray = JSONObject.parseArray(result);
-        for(Object s : jsonArray.toArray()){
-            JSONObject json = (JSONObject) s;
-            if(map.get(setTerm((String)json.get("term")))==null){
-                ArrayList<Object> objects = new ArrayList<>();
-                objects.add(s);
-                map.put(setTerm((String)json.get("term")),objects);}
-            else {
-                ArrayList<Object> term = map.get(setTerm((String)json.get("term")));
-                term.add(s);
-                map.put(setTerm((String)json.get("term")), term);
+            ResponseEntity<String> entity0 = Requests.get("http://myo.swust.edu.cn/mht_shall/a/service/serviceFrontManage#view_index", "", restTemplate);
+            ResponseEntity<String> entity = Requests.get("http://myo.swust.edu.cn/mht_shall/a/service/studentMark", "http://myo.swust.edu.cn/mht_shall/a/service/serviceFrontManage#view_index", restTemplate);
+            Requests.get("http://myo.swust.edu.cn/mht_shall/a/service/studentInfo","http://myo.swust.edu.cn/mht_shall/a/service/serviceFrontManage#view_index", restTemplate);
+            JSONObject jsonObject = JSONObject.parseObject(entity.getBody());
+            HashMap<String, ArrayList<Object>>map = new HashMap<>();
+            JSONObject body = (JSONObject)jsonObject.get("body");
+            if(body == null) {
+                return "";
             }
-        }
+            String result = body.get("result").toString();
+            JSONArray jsonArray = JSONObject.parseArray(result);
+            for(Object s : jsonArray.toArray()){
+                JSONObject json = (JSONObject) s;
+                if(map.get(setTerm((String)json.get("term")))==null){
+                    ArrayList<Object> objects = new ArrayList<>();
+                    objects.add(s);
+                    map.put(setTerm((String)json.get("term")),objects);}
+                else {
+                    ArrayList<Object> term = map.get(setTerm((String)json.get("term")));
+                    term.add(s);
+                    map.put(setTerm((String)json.get("term")), term);
+                }
+            }
 //        System.out.println(map);
-        return JSONObject.toJSONString(map);
+            return JSONObject.toJSONString(map);
+        }
+        catch (NullPointerException e){
+            return null;
+        }
+
     }
 
     @Override
     public String getGPA(HttpSession session) {
         RestTemplate restTemplate = (RestTemplate) session.getAttribute("template");
-        ResponseEntity<String> entity0 = Requests.get("http://myo.swust.edu.cn/mht_shall/a/service/serviceFrontManage#view_index", "", restTemplate);
+        try {
+            ResponseEntity<String> entity0 = Requests.get("http://myo.swust.edu.cn/mht_shall/a/service/serviceFrontManage#view_index", "", restTemplate);
 
-        ResponseEntity<String> entity = Requests.get("http://myo.swust.edu.cn/mht_shall/a/service/studentInfo", "http://myo.swust.edu.cn/mht_shall/a/service/serviceFrontManage#view_index", restTemplate);
-        return JSONObject.toJSONString(entity.getBody());
+            ResponseEntity<String> entity = Requests.get("http://myo.swust.edu.cn/mht_shall/a/service/studentInfo", "http://myo.swust.edu.cn/mht_shall/a/service/serviceFrontManage#view_index", restTemplate);
+            return JSONObject.toJSONString(entity.getBody());
+        }catch (NullPointerException e){
+            return null;
+        }
+
     }
+
+
+
 }
