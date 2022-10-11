@@ -3,12 +3,8 @@ package org.shirakawatyu.handixikebackend.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-
-
-import org.apache.http.client.CircularRedirectException;
 import org.shirakawatyu.handixikebackend.service.ScoreService;
 import org.shirakawatyu.handixikebackend.utils.Requests;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -16,7 +12,6 @@ import org.springframework.web.client.RestTemplate;
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 @Service
 public class ScoreServiceImpl implements ScoreService {

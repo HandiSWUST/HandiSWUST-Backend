@@ -10,7 +10,7 @@ import java.util.List;
 public interface CourseService {
 //    JSONArray getRawCourse();
 
-    JSONArray getRawCourse(RestTemplate restTemplate);
+//    JSONArray getRawCourse(RestTemplate restTemplate, long no);
 
     String course(HttpSession session, long no);
     String courseCurWeek(HttpSession session, long no);

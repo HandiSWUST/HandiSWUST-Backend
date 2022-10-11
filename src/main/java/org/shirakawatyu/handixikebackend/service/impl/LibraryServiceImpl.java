@@ -10,14 +10,16 @@ import org.jsoup.select.Elements;
 import org.shirakawatyu.handixikebackend.pojo.Library;
 import org.shirakawatyu.handixikebackend.service.LibraryService;
 import org.shirakawatyu.handixikebackend.utils.Requests;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class LibraryServiceImpl implements LibraryService {

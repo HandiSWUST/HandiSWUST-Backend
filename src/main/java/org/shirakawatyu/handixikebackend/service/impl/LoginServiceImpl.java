@@ -1,7 +1,5 @@
 package org.shirakawatyu.handixikebackend.service.impl;
 
-import io.lettuce.core.RedisClient;
-import org.apache.http.client.CircularRedirectException;
 import org.apache.http.client.CookieStore;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.jsoup.Jsoup;
@@ -9,31 +7,27 @@ import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.shirakawatyu.handixikebackend.config.InitRestTemplate;
 import org.shirakawatyu.handixikebackend.service.LoginService;
-import org.shirakawatyu.handixikebackend.utils.ArrayUtils;
 import org.shirakawatyu.handixikebackend.utils.Requests;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
 
 import javax.servlet.http.HttpSession;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Base64;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 
 public class LoginServiceImpl implements LoginService {
 
-//    RestTemplate restTemplate;
-//    BasicCookieStore cookieStore;
+
     @Autowired
     StringRedisTemplate redisTemplate;
     int count = 1;
@@ -62,24 +56,11 @@ public class LoginServiceImpl implements LoginService {
         session.setAttribute("template",restTemplate);
         session.setAttribute("cookieStore",cookieStore);
         ResponseEntity<byte[]> entity = restTemplate.getForEntity("http://cas.swust.edu.cn/authserver/captcha", byte[].class);
-//        if(entity.getHeaders().get("Set-Cookie") != null) {
-//            List<String> cookies = entity.getHeaders().get("Set-Cookie");
-//            session.setAttribute("cookies", cookies.toArray());
-//        }
         byte[] bytes = entity.getBody();
         return Base64.getEncoder().encodeToString(bytes);
     }
 
-    /**
-     * 登录认证后将cookies放入session，attribute名字为cookies，取用时调用 ArrayUtils.arrayToList((Object[]) session.getAttribute("cookies"); 即可
-     * 返回cookies列表
-     *
-     * @param username
-     * @param password
-     * @param captcha
-     * @param session
-     * @return
-     */
+
     @Override
     public String login(String username, String password, String captcha, HttpSession session) {
         RestTemplate restTemplate =(RestTemplate)session.getAttribute("template");
@@ -124,6 +105,8 @@ public class LoginServiceImpl implements LoginService {
             session.setAttribute("no", username);
             // 统计每日登录人次
             redisTemplate.opsForHash().increment("count", new SimpleDateFormat("yyyy-MM-dd").format(new Date()), 1);
+            // 日活统计
+            redisTemplate.opsForHyperLogLog().add("DAU:" + new SimpleDateFormat("yyyy-MM-dd").format(new Date()), username);
             return "1200 LOGIN SUCCESS";
         }
         return "1500 LOGIN FAIL";

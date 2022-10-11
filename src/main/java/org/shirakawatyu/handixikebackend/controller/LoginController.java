@@ -57,6 +57,5 @@ public class LoginController {
 
         return loginService.loginCheck(session);
 
-
     }
 }
