@@ -5,6 +5,11 @@ import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import org.shirakawatyu.handixikebackend.pojo.Lesson;
 
+import java.util.Iterator;
+import java.util.ListIterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class LessonUtils {
     public static Lesson merge(JSONObject lesson1, JSONObject lesson2) {
         String jw_course_code = lesson1.getString("jw_course_code") + " | " + lesson2.getString("jw_course_code");
@@ -34,11 +39,11 @@ public class LessonUtils {
         return new Lesson(jw_course_code, base_teacher_name, base_room_name, week, jw_task_book_no, jw_course_name, section_end, week_day, section, base_teacher_no, section_start);
     }
 
-    public static void split(JSONObject lesson, JSONArray array) {
+    public static void split(JSONObject lesson, ListIterator<Object> iterator) {
         int start = lesson.getInteger("section_start");
         int end = lesson.getInteger("section_end");
         for (int i = start; i < end; i+=2) {
-            array.add(JSON.parseObject(JSON.toJSONString(new Lesson(lesson.getString("jw_course_code"),
+            iterator.add(JSON.parseObject(JSON.toJSONString(new Lesson(lesson.getString("jw_course_code"),
                     lesson.getString("base_teacher_name"),
                     lesson.getString("base_room_name"),
                     lesson.getString("week"),
@@ -55,30 +60,35 @@ public class LessonUtils {
     public static String[] timeProcess(String time) {
         String week = time.split("周")[0];
         String weekday = null;
-        switch (time.split("星期")[1].charAt(0)) {
-            case '一':
-                weekday = "1";
-                break;
-            case '二':
-                weekday = "2";
-                break;
-            case '三':
-                weekday = "3";
-                break;
-            case '四':
-                weekday = "4";
-                break;
-            case '五':
-                weekday = "5";
-                break;
-            case '六':
-                weekday = "6";
-                break;
-            case '日':
-                weekday = "7";
-                break;
-            default:
-                break;
+        try {
+            switch (time.split("星期")[1].charAt(0)) {
+                case '一':
+                    weekday = "1";
+                    break;
+                case '二':
+                    weekday = "2";
+                    break;
+                case '三':
+                    weekday = "3";
+                    break;
+                case '四':
+                    weekday = "4";
+                    break;
+                case '五':
+                    weekday = "5";
+                    break;
+                case '六':
+                    weekday = "6";
+                    break;
+                case '日':
+                    weekday = "7";
+                    break;
+                default:
+                    break;
+            }
+        }catch (Exception e) {
+            Logger.getLogger("timeProcess,weekday =>").log(Level.WARNING, time);
+            return null;
         }
         String sectionStart = time.substring(time.indexOf("星期") + 3, time.indexOf("-"));
         String sectionEnd = time.substring(time.indexOf("-") + 1, time.indexOf("节"));
@@ -129,41 +139,70 @@ public class LessonUtils {
     }
 
     public static void process(JSONArray lessonsArray) {
-        // 节数大于2处理
-        int size = lessonsArray.size();
-        for (int i = 0; i < size; i++) {
-            JSONObject jsonObject = lessonsArray.getJSONObject(i);
+        ListIterator<Object> iterator = lessonsArray.listIterator();
+        while(iterator.hasNext()) {
+            JSONObject jsonObject = (JSONObject) iterator.next();
             if(Integer.parseInt(jsonObject.getString("section_end")) - Integer.parseInt(jsonObject.getString("section_start")) > 1) {
-                lessonsArray.remove(i);
-                LessonUtils.split(jsonObject, lessonsArray);
-                size++;
+                iterator.remove();
+                LessonUtils.split(jsonObject, iterator);
             }
         }
-        // 重课处理
-        for (int i = 0; i < size; ) {
+        for (int i = 0; i < lessonsArray.size(); i++) {
             JSONObject object = lessonsArray.getJSONObject(i);
-            boolean flag = true;
-            for (int j = 0; j < size; j++) {
+            for (int j = 0; object != null && j < lessonsArray.size(); j++) {
                 JSONObject o = lessonsArray.getJSONObject(j);
-                if (j != i && object.get("section_start").equals(o.get("section_start")) && object.get("week_day").equals(o.get("week_day"))) {
+                if (o != null && j != i && object.get("section_start").equals(o.get("section_start")) && object.get("week_day").equals(o.get("week_day"))) {
                     Lesson merge = LessonUtils.merge(object, o);
-                    lessonsArray.remove(i);
-                    if (i < j) {
-                        lessonsArray.remove(j - 1);
-                    } else {
-                        lessonsArray.remove(j);
-                    }
+                    lessonsArray.set(i, null);
+                    lessonsArray.set(j, null);
                     String s = JSON.toJSONString(merge);
                     JSONObject object1 = JSON.parseObject(s);
                     lessonsArray.add(object1);
-                    size--;
-                    flag = false;
                     break;
                 }
             }
-            if (flag) {
-                i++;
+        }
+        iterator = lessonsArray.listIterator();
+        while (iterator.hasNext()) {
+            if(iterator.next() == null) {
+                iterator.remove();
             }
         }
+        // 节数大于2处理
+//        int size = lessonsArray.size();
+//        for (int i = 0; i < size; i++) {
+//            JSONObject jsonObject = lessonsArray.getJSONObject(i);
+//            if(Integer.parseInt(jsonObject.getString("section_end")) - Integer.parseInt(jsonObject.getString("section_start")) > 1) {
+//                lessonsArray.remove(i);
+//                LessonUtils.split(jsonObject, lessonsArray);
+//                size++;
+//            }
+//        }
+        // 重课处理
+//        for (int i = 0; i < size; ) {
+//            JSONObject object = lessonsArray.getJSONObject(i);
+//            boolean flag = true;
+//            for (int j = 0; j < size; j++) {
+//                JSONObject o = lessonsArray.getJSONObject(j);
+//                if (j != i && object.get("section_start").equals(o.get("section_start")) && object.get("week_day").equals(o.get("week_day"))) {
+//                    Lesson merge = LessonUtils.merge(object, o);
+//                    lessonsArray.remove(i);
+//                    if (i < j) {
+//                        lessonsArray.remove(j - 1);
+//                    } else {
+//                        lessonsArray.remove(j);
+//                    }
+//                    String s = JSON.toJSONString(merge);
+//                    JSONObject object1 = JSON.parseObject(s);
+//                    lessonsArray.add(object1);
+//                    size--;
+//                    flag = false;
+//                    break;
+//                }
+//            }
+//            if (flag) {
+//                i++;
+//            }
+//        }
     }
 }

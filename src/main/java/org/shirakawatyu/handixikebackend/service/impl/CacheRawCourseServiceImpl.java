@@ -19,6 +19,8 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.nio.charset.StandardCharsets;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Service
 public class CacheRawCourseServiceImpl implements CacheRawCourseService {
@@ -73,18 +75,48 @@ public class CacheRawCourseServiceImpl implements CacheRawCourseService {
                         continue;
                     }
                     String[] timeItems = LessonUtils.timeProcess(tds.get(2).text());
-                    lessonsArray.add(JSON.parseObject(JSON.toJSONString(
-                            new Lesson("0",
-                                    tds.get(4).text(),
-                                    tds.get(3).text(),
-                                    timeItems[0],
-                                    "0",
-                                    tds.get(1).text(),
-                                    timeItems[3],
-                                    timeItems[1],
-                                    timeItems[4],
-                                    "0",
-                                    timeItems[2]))));
+                    if(timeItems == null) {
+                        Logger.getLogger("At C.R.C.S.I Line 78 => ").log(Level.WARNING, String.join("-",
+                                "0",
+                                tds.get(4).text(),
+                                tds.get(3).text(),
+                                "time=null",
+                                "0",
+                                tds.get(1).text(),
+                                "time=null",
+                                "time=null",
+                                "time=null",
+                                "0",
+                                "time=null"));
+                        continue;
+                    }
+                    try {
+                        lessonsArray.add(JSON.parseObject(JSON.toJSONString(
+                                new Lesson("0",
+                                        tds.get(4).text(),
+                                        tds.get(3).text(),
+                                        timeItems[0],
+                                        "0",
+                                        tds.get(1).text(),
+                                        timeItems[3],
+                                        timeItems[1],
+                                        timeItems[4],
+                                        "0",
+                                        timeItems[2]))));
+                    }catch (Exception e) {
+                        Logger.getLogger("At C.R.C.S.I Line 78 => ").log(Level.WARNING, String.join("-",
+                                "0",
+                                tds.get(4).text(),
+                                tds.get(3).text(),
+                                "time=null",
+                                "0",
+                                tds.get(1).text(),
+                                "time=null",
+                                "time=null",
+                                "time=null",
+                                "0",
+                                "time=null"));
+                    }
                 }
             }
         }
