@@ -29,8 +29,6 @@ public class ScoreServiceImpl implements ScoreService {
         String nextYear = Integer.toString(i);
         String th = term.substring(2);
         return year+"-"+nextYear+" "+"第"+th+"学期";
-
-
     }
     @Override
     public String getScore(HttpSession session) {
@@ -43,8 +41,9 @@ public class ScoreServiceImpl implements ScoreService {
             JSONObject jsonObject = JSONObject.parseObject(entity.getBody());
             HashMap<String, ArrayList<Object>>map = new HashMap<>();
             JSONObject body = (JSONObject)jsonObject.get("body");
+
             if(body == null) {
-                return "";
+                return null;
             }
             String result = body.get("result").toString();
             JSONArray jsonArray = JSONObject.parseArray(result);
@@ -60,7 +59,7 @@ public class ScoreServiceImpl implements ScoreService {
                     map.put(setTerm((String)json.get("term")), term);
                 }
             }
-//        System.out.println(map);
+
             return JSONObject.toJSONString(map);
         }
         catch (NullPointerException e){
@@ -68,7 +67,6 @@ public class ScoreServiceImpl implements ScoreService {
         }
 
     }
-
     @Override
     public String getGPA(HttpSession session) {
         RestTemplate restTemplate = (RestTemplate) session.getAttribute("template");
@@ -80,7 +78,6 @@ public class ScoreServiceImpl implements ScoreService {
         }catch (NullPointerException e){
             return null;
         }
-
     }
 
 
