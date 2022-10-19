@@ -9,6 +9,7 @@ import org.jsoup.select.Elements;
 import org.shirakawatyu.handixikebackend.common.Const;
 import org.shirakawatyu.handixikebackend.pojo.Lesson;
 import org.shirakawatyu.handixikebackend.service.CacheRawCourseService;
+import org.shirakawatyu.handixikebackend.utils.ArrayUtils;
 import org.shirakawatyu.handixikebackend.utils.LessonUtils;
 import org.shirakawatyu.handixikebackend.utils.Requests;
 import org.springframework.cache.annotation.Cacheable;
@@ -121,6 +122,9 @@ public class CacheRawCourseServiceImpl implements CacheRawCourseService {
             }
         }
         if(lessonsArray.size() > 0) {
+            if (ArrayUtils.nullObjChk(lessonsArray)) {
+                Logger.getLogger("At C.R.C.S.I course_name | Convert => ").log(Level.WARNING, lessonsArray.toJSONString());
+            }
             return lessonsArray;
         }
         return null;

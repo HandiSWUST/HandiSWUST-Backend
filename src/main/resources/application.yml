@@ -12,3 +12,7 @@ spring:
 cache:
   default:
     expire-time: 3600
+
+logging:
+  file:
+    path: ./swust-log
