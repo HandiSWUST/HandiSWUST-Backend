@@ -1,5 +1,11 @@
 server:
+
   port: 8080
+  servlet:
+    session:
+      timeout: 3d
+      cookie:
+        max-age: 3d
 spring:
   redis:
     host: 82.156.19.215
@@ -9,6 +15,8 @@ spring:
       pool:
         max-active: -1
         max-idle: 10
+
+
 cache:
   default:
     expire-time: 3600
