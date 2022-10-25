@@ -1,5 +1,6 @@
 package org.shirakawatyu.handixikebackend;
 
+import cn.hutool.http.HttpUtil;
 import org.junit.jupiter.api.Test;
 import org.shirakawatyu.handixikebackend.common.Const;
 import org.shirakawatyu.handixikebackend.utils.Requests;
@@ -20,6 +21,7 @@ class HandiXikeBackendApplicationTests {
 
     @Test
     void contextLoads() {
+
     }
 
 }

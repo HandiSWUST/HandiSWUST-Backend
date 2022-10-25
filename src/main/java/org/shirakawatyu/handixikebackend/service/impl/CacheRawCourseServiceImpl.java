@@ -122,9 +122,7 @@ public class CacheRawCourseServiceImpl implements CacheRawCourseService {
             }
         }
         if(lessonsArray.size() > 0) {
-            if (ArrayUtils.nullObjChk(lessonsArray)) {
-                Logger.getLogger("At C.R.C.S.I course_name | Convert => ").log(Level.WARNING, lessonsArray.toJSONString());
-            }
+            ArrayUtils.nullObjChk(lessonsArray);
             return lessonsArray;
         }
         return null;

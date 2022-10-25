@@ -16,6 +16,7 @@ public class MvcConfig implements WebMvcConfigurer {
                 .excludePathPatterns("/api/captcha")
                 .excludePathPatterns("/api/login")
                 .excludePathPatterns("/api/loginCheck")
+                .excludePathPatterns("/api/gethitokoto")
                 .excludePathPatterns("/api/count");
     }
 }
