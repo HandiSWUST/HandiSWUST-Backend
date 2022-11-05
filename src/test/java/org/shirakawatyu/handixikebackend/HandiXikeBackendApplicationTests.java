@@ -1,5 +1,6 @@
 package org.shirakawatyu.handixikebackend;
 
+import cn.hutool.http.HttpGlobalConfig;
 import cn.hutool.http.HttpUtil;
 import org.junit.jupiter.api.Test;
 import org.shirakawatyu.handixikebackend.common.Const;
@@ -14,13 +15,14 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import javax.annotation.Resource;
+import java.net.*;
 import java.util.*;
 
 @SpringBootTest
 class HandiXikeBackendApplicationTests {
 
     @Test
-    void contextLoads() {
+    void contextLoads() throws URISyntaxException {
 
     }
 

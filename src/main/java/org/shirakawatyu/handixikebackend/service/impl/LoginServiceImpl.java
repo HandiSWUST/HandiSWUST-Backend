@@ -69,7 +69,9 @@ public class LoginServiceImpl implements LoginService {
             return null;
         }
 //        List<String> cookies = ArrayUtils.arrayToList((Object[]) session.getAttribute("cookies"));
-        ResponseEntity<String> res = restTemplate.getForEntity("http://cas.swust.edu.cn/authserver/login?service=http://202.115.175.175/swust/", String.class);
+        // 临时改动，过后记得改回来
+//        ResponseEntity<String> res = restTemplate.getForEntity("http://cas.swust.edu.cn/authserver/login?service=http://202.115.175.175/swust/", String.class);
+        ResponseEntity<String> res = restTemplate.getForEntity("http://cas.swust.edu.cn/authserver/login", String.class);
         String execution = null;
         try {
             Document parse = Jsoup.parse(res.getBody());
@@ -91,7 +93,7 @@ public class LoginServiceImpl implements LoginService {
 
         ResponseEntity<String> entity = null;
         try {
-            entity = Requests.post("http://cas.swust.edu.cn/authserver/login?service=http://202.115.175.175/swust/", map, restTemplate);
+            entity = Requests.post("http://cas.swust.edu.cn/authserver/login", map, restTemplate);
         }catch (Exception e) {
             return "1500 LOGIN FAIL";
         }
@@ -99,7 +101,9 @@ public class LoginServiceImpl implements LoginService {
         session.setAttribute("template", restTemplate);
         count++;
 
-        if(entity != null && entity.getBody() != null && entity.getBody().contains("西南科技大学学生实践教学自助学习系统")) {
+        // 临时改动，过后记得改回来
+//        if(entity != null && entity.getBody() != null && entity.getBody().contains("西南科技大学学生实践教学自助学习系统")) {
+        if(entity != null && entity.getBody() != null && entity.getBody().contains("location.href = '/sys/portal/page.jsp';")) {
             session.setAttribute("status", true);
             session.setAttribute("cookieStore", cookieStore);
             session.setAttribute("no", username);
