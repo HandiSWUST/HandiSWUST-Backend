@@ -56,17 +56,40 @@ public class ExamServiceImpl implements ExamService {
         }
     }
 
-    private List<Exam> setExamList(String [] strings){
+    private String setExamList(String [] strings){
+
         ArrayList<Exam> exams = new ArrayList<>();
+        HashMap<String, List<Exam>> map = new HashMap<>();
 
         int examNum = (strings.length-8)/9;
         for(int p =0;p<examNum;p++){
             int aid = 8+p*9;
-            Exam exam = new Exam(strings[aid],strings[1+aid],strings[2+aid],strings[3+aid],strings[4+aid],strings[5+aid],strings[6+aid],strings[7+aid],strings[8+aid]);
+            if(strings[aid].equals("")){
+                ArrayList<Exam> re = new ArrayList<>();
+                int start = aid + 1;
+                int reNum = (strings.length - 8 - start)/9;
+                for (int p2 = 0;p2<reNum;p2++){
+                    int aid2 = 8+p2*9;
+                    Exam exam = new Exam(strings[start+aid2],strings[start+1+aid2],strings[start+2+aid2],strings[start+3+aid2],strings[start+4+aid2],
+                            strings[start+5+aid2],strings[start+6+aid2],strings[start+7+aid2],strings[start+8+aid2]);
+                    re.add(exam);
+                }
+                map.put("补考(已考完的科目仍然显示的话，是教务系统的锅)",re);
+                break;
+            }
+
+
+            Exam exam = new Exam(strings[aid],strings[1+aid],strings[2+aid],strings[3+aid],strings[4+aid],
+                    strings[5+aid],strings[6+aid],strings[7+aid],strings[8+aid]);
             exams.add(exam);
         }
+        map.put("期末考试",exams);
 
-     return  exams;
+
+       return JSONObject.toJSONString(map);
+
+
+
     }
 
 
@@ -101,10 +124,10 @@ public class ExamServiceImpl implements ExamService {
             Document doc = Jsoup.connect("https://matrix.dean.swust.edu.cn/acadmicManager/index.cfm?event=studentPortal:examTable").cookie("SSO", sso).get();
             String info = doc.body().getElementsByTag("td").text();
             String[] s = info.split(" ");
-            System.out.println(Arrays.toString(s));
+//            System.out.println(Arrays.toString(s));
             if(s.length<9)return "no data";
-            List<Exam> exams = setExamList(s);
-            return JSONObject.toJSONString(exams);
+
+            return setExamList(s);
 
 
         }catch (IOException e){
@@ -112,7 +135,6 @@ public class ExamServiceImpl implements ExamService {
         }
 
         return "s";
-
     }
 
 
