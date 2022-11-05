@@ -102,6 +102,7 @@ public class ExamServiceImpl implements ExamService {
             String info = doc.body().getElementsByTag("td").text();
             String[] s = info.split(" ");
             System.out.println(Arrays.toString(s));
+            if(s.length<9)return "no data";
             List<Exam> exams = setExamList(s);
             return JSONObject.toJSONString(exams);
 
