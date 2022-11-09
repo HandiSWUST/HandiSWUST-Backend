@@ -27,9 +27,9 @@ public class InitRestTemplate {
 
         HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
         RequestConfig requestConfig = RequestConfig.custom()
-                .setSocketTimeout(5000)
-                .setConnectTimeout(5000)
-                .setConnectionRequestTimeout(3000)
+                .setSocketTimeout(3000)
+                .setConnectTimeout(3000)
+                .setConnectionRequestTimeout(1000)
                 .setCircularRedirectsAllowed(true)
                 .build();
         Registry<ConnectionSocketFactory> registry = RegistryBuilder.<ConnectionSocketFactory>create()

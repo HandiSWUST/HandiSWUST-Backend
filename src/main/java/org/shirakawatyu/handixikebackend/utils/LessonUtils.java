@@ -119,6 +119,9 @@ public class LessonUtils {
                 boolean flag = false;
                 for (int j = 0; j < split.length; j++) {
                     flag = LessonUtils.isCurWeek(split[j], selectedWeek);
+                    if (flag) {
+                        break;
+                    }
                 }
                 if(!flag) {
                     lessonsArray.remove(i);
