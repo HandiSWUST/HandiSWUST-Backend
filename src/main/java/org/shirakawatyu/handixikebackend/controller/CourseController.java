@@ -4,9 +4,8 @@ import org.shirakawatyu.handixikebackend.service.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
+
 import javax.servlet.http.HttpSession;
 import java.util.List;
 
@@ -15,6 +14,8 @@ public class CourseController {
 
     @Autowired
     CourseService courseService;
+
+    // no为学号，用于存取缓存的Key
 
     @GetMapping("/api/course/all")
     @ResponseBody
@@ -34,6 +35,12 @@ public class CourseController {
     public String selectedCourse(@PathVariable int selectedWeek, HttpSession session) {
         long no = Long.parseLong((String) session.getAttribute("no"));
         return courseService.courseSelectedWeek(session, no, selectedWeek);
+
     }
 
+    @PostMapping("/api/course/local/{selectedWeek}")
+    @ResponseBody
+    public String useLocalCourse(@PathVariable int selectedWeek, @RequestBody String courseData) {
+        return courseService.useLocalCourse(selectedWeek, courseData);
+    }
 }

@@ -18,6 +18,7 @@ public class ArrayUtils {
         return list;
     }
 
+    // 检查是否有名字为null的课程
     public static boolean nullObjChk(JSONArray jsonArray) {
         // 这个map用于存放获取为null的课程，以后可以考虑分出去用一个单独的文件存放
         HashMap<String, String> map = new HashMap<>();

@@ -143,6 +143,7 @@ public class LessonUtils {
 
     public static void process(JSONArray lessonsArray) {
         ListIterator<Object> iterator = lessonsArray.listIterator();
+        // 节数大于2处理，将其切割成两节
         while(iterator.hasNext()) {
             JSONObject jsonObject = (JSONObject) iterator.next();
             if(Integer.parseInt(jsonObject.getString("section_end")) - Integer.parseInt(jsonObject.getString("section_start")) > 1) {
@@ -150,6 +151,8 @@ public class LessonUtils {
                 LessonUtils.split(jsonObject, iterator);
             }
         }
+
+        // 重课处理，两节合并为一节
         for (int i = 0; i < lessonsArray.size(); i++) {
             JSONObject object = lessonsArray.getJSONObject(i);
             for (int j = 0; object != null && j < lessonsArray.size(); j++) {
@@ -171,41 +174,14 @@ public class LessonUtils {
                 iterator.remove();
             }
         }
-        // 节数大于2处理
-//        int size = lessonsArray.size();
-//        for (int i = 0; i < size; i++) {
-//            JSONObject jsonObject = lessonsArray.getJSONObject(i);
-//            if(Integer.parseInt(jsonObject.getString("section_end")) - Integer.parseInt(jsonObject.getString("section_start")) > 1) {
-//                lessonsArray.remove(i);
-//                LessonUtils.split(jsonObject, lessonsArray);
-//                size++;
-//            }
-//        }
-        // 重课处理
-//        for (int i = 0; i < size; ) {
-//            JSONObject object = lessonsArray.getJSONObject(i);
-//            boolean flag = true;
-//            for (int j = 0; j < size; j++) {
-//                JSONObject o = lessonsArray.getJSONObject(j);
-//                if (j != i && object.get("section_start").equals(o.get("section_start")) && object.get("week_day").equals(o.get("week_day"))) {
-//                    Lesson merge = LessonUtils.merge(object, o);
-//                    lessonsArray.remove(i);
-//                    if (i < j) {
-//                        lessonsArray.remove(j - 1);
-//                    } else {
-//                        lessonsArray.remove(j);
-//                    }
-//                    String s = JSON.toJSONString(merge);
-//                    JSONObject object1 = JSON.parseObject(s);
-//                    lessonsArray.add(object1);
-//                    size--;
-//                    flag = false;
-//                    break;
-//                }
-//            }
-//            if (flag) {
-//                i++;
-//            }
-//        }
+    }
+
+    public static String simpleSelectWeek(int selectedWeek, JSONArray lessonsArray) {
+        LessonUtils.onlySelectWeek(selectedWeek, lessonsArray);
+        LessonUtils.process(lessonsArray);
+        if(lessonsArray.size() > 0) {
+            return lessonsArray.toJSONString();
+        }
+        return null;
     }
 }

@@ -15,4 +15,5 @@ public interface CourseService {
     String course(HttpSession session, long no);
     String courseCurWeek(HttpSession session, long no);
     String courseSelectedWeek(HttpSession session, long no, int selectedWeek);
+    String useLocalCourse(int selectedWeek, String courseData);
 }
