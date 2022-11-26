@@ -43,4 +43,16 @@ public class CourseController {
     public String useLocalCourse(@PathVariable int selectedWeek, @RequestBody String courseData) {
         return courseService.useLocalCourse(selectedWeek, courseData);
     }
+
+    @PostMapping("/api/course/push/save/{qq}")
+    @ResponseBody
+    public String savePushData(@PathVariable long qq, @RequestBody String courseData, HttpSession session) {
+        return courseService.savePushData(qq, courseData, session);
+    }
+
+    @GetMapping("/api/course/push/test")
+    @ResponseBody
+    public String testPush(HttpSession session) {
+        return courseService.testPush((String) session.getAttribute("no"));
+    }
 }

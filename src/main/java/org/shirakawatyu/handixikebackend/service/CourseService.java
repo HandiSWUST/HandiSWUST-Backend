@@ -16,4 +16,7 @@ public interface CourseService {
     String courseCurWeek(HttpSession session, long no);
     String courseSelectedWeek(HttpSession session, long no, int selectedWeek);
     String useLocalCourse(int selectedWeek, String courseData);
+    String savePushData(long qq, String courseData, HttpSession session);
+    String deletePushData(String studentId);
+    String testPush(String studentId);
 }
