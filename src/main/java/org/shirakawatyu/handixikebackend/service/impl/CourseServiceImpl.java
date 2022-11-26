@@ -21,6 +21,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import javax.servlet.http.HttpSession;
+import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 
@@ -66,8 +67,9 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public String savePushData(long qq, String courseData, HttpSession session) {
+        String decodeData = URLDecoder.decode(courseData, StandardCharsets.UTF_8);
         long no = Long.parseLong((String) session.getAttribute("no"));
-        LessonMessage lessonMessage = new LessonMessage(no, qq, JSONArray.parseArray(courseData));
+        LessonMessage lessonMessage = new LessonMessage(no, qq, JSONArray.parseArray(decodeData));
         HttpEntity<byte[]> requestEntity = new HttpEntity<>(JSON.toJSONString(lessonMessage).getBytes(StandardCharsets.UTF_8));
         try {
             InitRestTemplate.init(new BasicCookieStore()).postForObject(pushUrl + "/api/push/save?sign=" + SignUtil.getSign(signature), requestEntity, String.class);
