@@ -2,9 +2,9 @@ server:
   port: 8080
   servlet:
     session:
-      timeout: 3d
+      timeout: 2d
       cookie:
-        max-age: 3d
+        max-age: 2d
 spring:
   redis:
     host: 82.156.19.215
@@ -25,5 +25,5 @@ logging:
     path: ./swust-log
 
 push:
-  url: http://ali.shirakawatyu.top:8081
+  url: http://47.108.88.133:8081
   signature: ShirakawaTyu

@@ -55,4 +55,10 @@ public class CourseController {
     public String testPush(HttpSession session) {
         return courseService.testPush((String) session.getAttribute("no"));
     }
+
+    @DeleteMapping("/api/course/push/delete")
+    @ResponseBody
+    public String deletePushData(HttpSession session) {
+        return courseService.deletePushData((String) session.getAttribute("no"));
+    }
 }

@@ -82,10 +82,8 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public String deletePushData(String studentId) {
-        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        params.add("sign", SignUtil.getSign(signature));
         try {
-            InitRestTemplate.init(new BasicCookieStore()).delete(pushUrl + "/api/push/delete/" + studentId, params);
+            InitRestTemplate.init(new BasicCookieStore()).delete(pushUrl + "/api/push/delete/" + studentId + "?sign=" + SignUtil.getSign(signature));
         }catch (Exception e) {
             e.printStackTrace();
             return "5502 DELETE FAIL";

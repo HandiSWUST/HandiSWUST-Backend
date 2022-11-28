@@ -5,6 +5,7 @@ import cn.hutool.http.HttpUtil;
 import org.junit.jupiter.api.Test;
 import org.shirakawatyu.handixikebackend.common.Const;
 import org.shirakawatyu.handixikebackend.utils.Requests;
+import org.shirakawatyu.handixikebackend.utils.SignUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpEntity;
@@ -23,7 +24,7 @@ class HandiXikeBackendApplicationTests {
 
     @Test
     void contextLoads() throws URISyntaxException {
-
+        System.out.println(SignUtil.getSign("ShirakawaTyu"));
     }
 
 }
