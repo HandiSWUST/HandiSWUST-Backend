@@ -29,7 +29,7 @@ public class InitRestTemplate {
         RequestConfig requestConfig = RequestConfig.custom()
                 .setSocketTimeout(2000)
                 .setConnectTimeout(2000)
-                .setConnectionRequestTimeout(1000)
+                .setConnectionRequestTimeout(2000)
                 .setCircularRedirectsAllowed(true)
                 .build();
         Registry<ConnectionSocketFactory> registry = RegistryBuilder.<ConnectionSocketFactory>create()

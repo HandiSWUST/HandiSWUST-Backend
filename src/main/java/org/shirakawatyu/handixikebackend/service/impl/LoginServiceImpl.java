@@ -22,6 +22,8 @@ import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Service
 
@@ -95,7 +97,11 @@ public class LoginServiceImpl implements LoginService {
         try {
             entity = Requests.post("http://cas.swust.edu.cn/authserver/login", map, restTemplate);
         }catch (Exception e) {
-            return "1500 LOGIN FAIL";
+            if (cookieStore.getCookies().size() >= 3) {
+                Logger.getLogger("o.s.h.s.i.LoginServiceImpl").log(Level.WARNING, "一站式大厅崩溃，但登录接口正常");
+            } else {
+                return "1502 REMOTE SERVICE ERROR";
+            }
         }
 //        session.setAttribute("cookies", cookies.toArray());
         session.setAttribute("template", restTemplate);
@@ -103,7 +109,7 @@ public class LoginServiceImpl implements LoginService {
 
         // 临时改动，过后记得改回来
 //        if(entity != null && entity.getBody() != null && entity.getBody().contains("西南科技大学学生实践教学自助学习系统")) {
-        if(entity != null && entity.getBody() != null && entity.getBody().contains("location.href = '/sys/portal/page.jsp';")) {
+        if(entity != null && entity.getBody() != null && entity.getBody().contains("location.href = '/sys/portal/page.jsp';") || cookieStore.getCookies().size() >= 3) {
             session.setAttribute("status", true);
             session.setAttribute("cookieStore", cookieStore);
             session.setAttribute("no", username);
