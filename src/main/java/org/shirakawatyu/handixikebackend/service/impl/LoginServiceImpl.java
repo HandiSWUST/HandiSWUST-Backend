@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpSession;
@@ -96,10 +97,14 @@ public class LoginServiceImpl implements LoginService {
         ResponseEntity<String> entity = null;
         try {
             entity = Requests.post("http://cas.swust.edu.cn/authserver/login", map, restTemplate);
-        }catch (Exception e) {
+        }catch (HttpClientErrorException e) {
+            int status = e.getRawStatusCode();
             if (cookieStore.getCookies().size() >= 3) {
                 Logger.getLogger("o.s.h.s.i.LoginServiceImpl").log(Level.WARNING, "一站式大厅崩溃，但登录接口正常");
-            } else {
+            } else if (status == 401) {
+                return "1500 LOGIN FAIL";
+            }
+            else {
                 return "1502 REMOTE SERVICE ERROR";
             }
         }

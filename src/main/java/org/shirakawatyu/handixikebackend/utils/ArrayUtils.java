@@ -2,6 +2,7 @@ package org.shirakawatyu.handixikebackend.utils;
 
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
+import org.shirakawatyu.handixikebackend.pojo.Score;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,6 +17,15 @@ public class ArrayUtils {
             }
         }
         return list;
+    }
+
+    // 固定添加至倒数第二项
+    public static void addSecondLast(ArrayList<Object> arrayList, Object o) {
+        int lastIndex = arrayList.size() - 1;
+        Object last = arrayList.get(lastIndex);
+        arrayList.remove(lastIndex);
+        arrayList.add(o);
+        arrayList.add(last);
     }
 
     // 检查是否有名字为null的课程
