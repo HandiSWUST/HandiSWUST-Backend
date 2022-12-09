@@ -30,31 +30,31 @@ import javax.servlet.http.HttpSession;
 
 @Service
 public class ExamServiceImpl implements ExamService {
-    private static void trustEveryone() {
-        try {
-            HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
-                public boolean verify(String hostname, SSLSession session) {
-                    return true;
-                }
-            });
-
-            SSLContext context = SSLContext.getInstance("TLS");
-            context.init(null, new X509TrustManager[]{new X509TrustManager() {
-                public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-                }
-
-                public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-                }
-
-                public X509Certificate[] getAcceptedIssuers() {
-                    return new X509Certificate[0];
-                }
-            }}, new SecureRandom());
-            HttpsURLConnection.setDefaultSSLSocketFactory(context.getSocketFactory());
-        } catch (Exception e) {
-            // e.printStackTrace();
-        }
-    }
+//    private static void trustEveryone() {
+//        try {
+//            HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
+//                public boolean verify(String hostname, SSLSession session) {
+//                    return true;
+//                }
+//            });
+//
+//            SSLContext context = SSLContext.getInstance("TLS");
+//            context.init(null, new X509TrustManager[]{new X509TrustManager() {
+//                public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+//                }
+//
+//                public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+//                }
+//
+//                public X509Certificate[] getAcceptedIssuers() {
+//                    return new X509Certificate[0];
+//                }
+//            }}, new SecureRandom());
+//            HttpsURLConnection.setDefaultSSLSocketFactory(context.getSocketFactory());
+//        } catch (Exception e) {
+//            // e.printStackTrace();
+//        }
+//    }
 
     private String setExamList(String [] strings){
 
@@ -95,8 +95,9 @@ public class ExamServiceImpl implements ExamService {
 
     @Override
     public String getExam(HttpSession session) {
-        trustEveryone();
-        Connection conn = Jsoup.connect("http://cas.swust.edu.cn/authserver/login?service=https%3A%2F%2Fmatrix%2Edean%2Eswust%2Eedu%2Ecn%2FacadmicManager%2Findex%2Ecfm%3Fevent%3DstudentPortal%3ADEFAULT%5FEVENT");
+//        trustEveryone();
+//        Connection conn = Jsoup.connect("https://matrix.dean.swust.edu.cn/acadmicManager/index.cfm?event=studentPortal:DEFAULT_EVEN");
+
 //        conn.header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8");
 //        conn.header("Accept-Encoding", "gzip, deflate, br");
 //        conn.header("Accept-Language", "zh-CN,zh;q=0.9");
@@ -106,31 +107,34 @@ public class ExamServiceImpl implements ExamService {
 //        conn.header("Upgrade-Insecure-Requests", "1");
 //        conn.header("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.186 Safari/537.36");
 
-        BasicCookieStore cookieStore = (BasicCookieStore)session.getAttribute("cookieStore");
+//        BasicCookieStore cookieStore = (BasicCookieStore)session.getAttribute("cookieStore");
+//
+//
+//        Cookie Tgc = cookieStore.getCookies().get(2);
+//        List<Cookie> cookiesStore = cookieStore.getCookies();
+//        Map<String, String> map = new HashMap<>();
+//        for (Cookie cookie : cookiesStore) {
+//            map.put(cookie.getName(), cookie.getValue());
+//        }
 
-
-        Cookie Tgc = cookieStore.getCookies().get(2);
-        List<Cookie> cookiesStore = cookieStore.getCookies();
-        Map<String, String> map = new HashMap<>();
-        for (Cookie cookie : cookiesStore) {
-            map.put(cookie.getName(), cookie.getValue());
-        }
-
-//        RestTemplate restTemplate = (RestTemplate) session.getAttribute("template");
+        RestTemplate restTemplate = (RestTemplate) session.getAttribute("template");
 
         try {
-            Connection.Response execute = conn.method(Connection.Method.GET).cookies(map).execute();
-            String sso = execute.cookie("SSO");
-            Document doc = Jsoup.connect("https://matrix.dean.swust.edu.cn/acadmicManager/index.cfm?event=studentPortal:examTable").cookie("SSO", sso).get();
-            String info = doc.body().getElementsByTag("td").text();
+
+//            Connection.Response execute = conn.method(Connection.Method.GET).cookies(map).execute();
+//            String sso = execute.cookie("SSO");
+//            Document doc = Jsoup.connect("https://matrix.dean.swust.edu.cn/acadmicManager/index.cfm?event=studentPortal:examTable").cookie("SSO", sso).get();
+            Requests.get("https://matrix.dean.swust.edu.cn/acadmicManager/index.cfm?event=studentPortal:DEFAULT_EVENT", "", restTemplate);
+            ResponseEntity<String> doc = Requests.get("https://matrix.dean.swust.edu.cn/acadmicManager/index.cfm?event=studentPortal:examTable", "", restTemplate);
+//            String info = doc.body().getElementsByTag("td").text();
+            String info = Jsoup.parse(doc.getBody()).getElementsByTag("td").text();
             String[] s = info.split(" ");
 //            System.out.println(Arrays.toString(s));
             if(s.length<9)return "no data";
 
             return setExamList(s);
 
-
-        }catch (IOException e){
+        }catch (Exception e){
             e.printStackTrace();
         }
 

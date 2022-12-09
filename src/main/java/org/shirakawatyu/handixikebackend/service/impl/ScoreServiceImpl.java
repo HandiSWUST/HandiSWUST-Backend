@@ -146,8 +146,12 @@ public class ScoreServiceImpl implements ScoreService {
                 while (!next.contains("已获得学分")) {
                     String[] s = next.split(" ");
                     ArrayList<Object> objects = hashMap.get(s[0]);
+                    if (objects == null) {
+                        objects = new ArrayList<>();
+                        hashMap.put(s[0], objects);
+                    }
                     if (s.length == 6) {
-                        ArrayUtils.addSecondLast(objects, new Score(s[1], s[3], "其他", s[5]));
+                        ArrayUtils.addSecondLast(objects, new Score(s[1], s[3], "其他", s[4]));
                     } else if (s.length == 7) {
                         ArrayUtils.addSecondLast(objects, new Score(s[1], s[3], "其他", s[5]));
                     }

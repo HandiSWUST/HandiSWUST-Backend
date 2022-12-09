@@ -21,7 +21,11 @@ public class ArrayUtils {
 
     // 固定添加至倒数第二项
     public static void addSecondLast(ArrayList<Object> arrayList, Object o) {
-        int lastIndex = arrayList.size() - 1;
+        int lastIndex = arrayList.size() - 1 ;
+        if (lastIndex < 0) {
+            arrayList.add(o);
+            return;
+        }
         Object last = arrayList.get(lastIndex);
         arrayList.remove(lastIndex);
         arrayList.add(o);
