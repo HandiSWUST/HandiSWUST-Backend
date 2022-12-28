@@ -22,6 +22,7 @@ public class DateUtil {
 
     public static String curWeek() {
         long cur = (System.currentTimeMillis() - Const.START_DATE) / (1000 * 60 * 60 * 24 * 7) + 1;
+        if (cur > Long.parseLong(totalWeek())) return totalWeek();
         return Long.toString(cur);
     }
 }

@@ -10,14 +10,14 @@ public class MvcConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         HandlerInterceptor interceptor = new LoginInterceptor();
-        registry
-                .addInterceptor(interceptor)
+        registry.addInterceptor(interceptor)
                 .excludePathPatterns("/api/key")
                 .excludePathPatterns("/api/captcha")
                 .excludePathPatterns("/api/login")
                 .excludePathPatterns("/api/loginCheck")
                 .excludePathPatterns("/api/gethitokoto")
                 .excludePathPatterns("/api/count")
+                .excludePathPatterns("/api/week")
                 .excludePathPatterns("/api/course/local/**");
     }
 }
