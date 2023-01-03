@@ -182,6 +182,6 @@ public class LessonUtils {
         if(lessonsArray.size() > 0) {
             return lessonsArray.toJSONString();
         }
-        return null;
+        return "[]";
     }
 }
