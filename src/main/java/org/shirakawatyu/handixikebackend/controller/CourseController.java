@@ -61,4 +61,9 @@ public class CourseController {
     public String deletePushData(HttpSession session) {
         return courseService.deletePushData((String) session.getAttribute("no"));
     }
+
+    @GetMapping("/api/course/push/check")
+    public String checkPush(HttpSession session) {
+        return courseService.checkPush((String) session.getAttribute("no"));
+    }
 }

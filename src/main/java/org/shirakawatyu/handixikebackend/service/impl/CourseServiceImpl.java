@@ -102,4 +102,17 @@ public class CourseServiceImpl implements CourseService {
             return "5500 FAIL";
         }
     }
+
+    @Override
+    public String checkPush(String studentId) {
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("sign", SignUtil.getSign(signature));
+        String s = HttpUtil.get(pushUrl + "/api/push/check/" + studentId, map);
+        if (s.equals("EXIST")) {
+            return "5200 SUCCESS";
+        } else {
+            return "5500 FAIL";
+        }
+    }
+
 }

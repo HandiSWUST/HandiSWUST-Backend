@@ -19,4 +19,5 @@ public interface CourseService {
     String savePushData(long qq, String courseData, HttpSession session);
     String deletePushData(String studentId);
     String testPush(String studentId);
+    String checkPush(String studentId);
 }
