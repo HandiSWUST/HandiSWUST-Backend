@@ -16,17 +16,6 @@
     <properties>
         <java.version>17</java.version>
     </properties>
-<!--    <dependencyManagement>-->
-<!--        <dependencies>-->
-<!--            <dependency>-->
-<!--                <groupId>org.springframework.session</groupId>-->
-<!--                <artifactId>spring-session-bom</artifactId>-->
-<!--                <version>2021.2.0</version>-->
-<!--                <type>pom</type>-->
-<!--                <scope>import</scope>-->
-<!--            </dependency>-->
-<!--        </dependencies>-->
-<!--    </dependencyManagement>-->
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -44,11 +33,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-cache</artifactId>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>org.springframework.session</groupId>-->
-<!--            <artifactId>spring-session-data-redis</artifactId>-->
-<!--        </dependency>-->
-        <!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
@@ -73,7 +57,7 @@
         <dependency>
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>
-            <version>5.8.7</version>
+            <version>5.8.12</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
