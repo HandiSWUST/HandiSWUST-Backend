@@ -10,4 +10,5 @@ public class LessonMessage {
     long studentId;
     long qq;
     JSONArray lessons;
+    long term;
 }

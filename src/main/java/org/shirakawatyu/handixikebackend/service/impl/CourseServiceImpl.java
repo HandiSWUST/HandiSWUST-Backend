@@ -1,6 +1,5 @@
 package org.shirakawatyu.handixikebackend.service.impl;
 
-import cn.hutool.crypto.digest.DigestUtil;
 import cn.hutool.http.HttpUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson2.JSONArray;
@@ -17,13 +16,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+
 import javax.servlet.http.HttpSession;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+
+import static org.shirakawatyu.handixikebackend.common.Const.CURRENT_TERM_LONG;
 
 @Service
 public class CourseServiceImpl implements CourseService {
@@ -69,7 +69,7 @@ public class CourseServiceImpl implements CourseService {
     public String savePushData(long qq, String courseData, HttpSession session) {
         String decodeData = URLDecoder.decode(courseData, StandardCharsets.UTF_8);
         long no = Long.parseLong((String) session.getAttribute("no"));
-        LessonMessage lessonMessage = new LessonMessage(no, qq, JSONArray.parseArray(decodeData));
+        LessonMessage lessonMessage = new LessonMessage(no, qq, JSONArray.parseArray(decodeData), CURRENT_TERM_LONG);
         HttpEntity<byte[]> requestEntity = new HttpEntity<>(JSON.toJSONString(lessonMessage).getBytes(StandardCharsets.UTF_8));
         try {
             InitRestTemplate.init(new BasicCookieStore()).postForObject(pushUrl + "/api/push/save?sign=" + SignUtil.getSign(signature), requestEntity, String.class);
