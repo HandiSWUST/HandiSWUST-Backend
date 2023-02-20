@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.nio.charset.StandardCharsets;
@@ -26,18 +27,28 @@ import java.util.logging.Logger;
 
 @Service
 public class CacheRawCourseServiceImpl implements CacheRawCourseService {
+    String[] baseUrls = {"http://sjjx.swust.edu.cn", "http://202.115.175.175"};
+    int urlIndex = 0;
     @Cacheable(value = "Course", key = "'r'+#p1", unless = "null == #result")
     @Override
     public JSONArray getRawCourse(RestTemplate restTemplate, long no) {
-        Requests.get("http://sjjx.swust.edu.cn/swust", "", restTemplate);
-        Requests.get("http://sjjx.swust.edu.cn/aexp/stuIndex.jsp", "http://202.115.175.175/aexp/stuLeft.jsp", restTemplate);
-        Requests.get("http://sjjx.swust.edu.cn/teachn/teachnAction/index.action", "http://202.115.175.175/aexp/stuLeft.jsp", restTemplate);
+
+        try {
+            Requests.get(baseUrls[urlIndex] + "/swust", "", restTemplate);
+        } catch (HttpClientErrorException e) {
+            Logger.getLogger("At C.R.C.S.I Line 35 => ").log(Level.WARNING, baseUrls[urlIndex] + " 接口出现问题，尝试切换至备用接口");
+            urlIndex = (urlIndex == 0) ? 1 : 0;
+            Requests.get(baseUrls[urlIndex] + "/swust", "", restTemplate);
+        }
+
+        Requests.get(baseUrls[urlIndex] + "/aexp/stuIndex.jsp", baseUrls[urlIndex] + "/aexp/stuLeft.jsp", restTemplate);
+        Requests.get(baseUrls[urlIndex] + "/teachn/teachnAction/index.action", baseUrls[urlIndex] + "/aexp/stuLeft.jsp", restTemplate);
 
         // 构造表单并拿到一般课表
         MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
         map.add("op", "getJwTimeTable");
         map.add("time", DateUtil.getCurFormatDate());
-        ResponseEntity<String> entity = Requests.post("http://sjjx.swust.edu.cn/teachn/stutool",map, restTemplate);
+        ResponseEntity<String> entity = Requests.post(baseUrls[urlIndex] + "/teachn/stutool",map, restTemplate);
 
         // 转码，不然会乱码
         String lessons = new String(entity.getBody().getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
@@ -45,21 +56,21 @@ public class CacheRawCourseServiceImpl implements CacheRawCourseService {
 
         // 拿到实验课表
         // 预请求一次得到页数
-        String url = "http://sjjx.swust.edu.cn/teachn/teachnAction/index.action?page.pageNum=2&currTeachCourseCode=&currWeek=&currYearterm=" + Const.CURRENT_TERM;
-        ResponseEntity<String> preGet = Requests.get(url, "http://sjjx.swust.edu.cn/teachn/teachnAction/index.action", restTemplate);
+        String url = baseUrls[urlIndex] + "/teachn/teachnAction/index.action?page.pageNum=2&currTeachCourseCode=&currWeek=&currYearterm=" + Const.CURRENT_TERM;
+        ResponseEntity<String> preGet = Requests.get(url, baseUrls[urlIndex] + "/teachn/teachnAction/index.action", restTemplate);
         int allPage = 0;
         try {
             Document preDoc = Jsoup.parse(preGet.getBody());
             String page = preDoc.getElementById("myPage").select("p").get(0).text();
             String[] pages = page.replaceAll("页", "").replaceAll(" ", "").replaceAll("第", "").replaceAll("共", "").split("/");
             allPage = Integer.parseInt(pages[1]);
-        }catch (Exception ignored) {
-
+        }catch (Exception e) {
+            throw new RuntimeException(e);
         }
         // 然后循环每一页
         for (int p = 1; p <= allPage; p++) {
-            url = "http://sjjx.swust.edu.cn/teachn/teachnAction/index.action?page.pageNum=" + p + "&currTeachCourseCode=&currWeek=&currYearterm=" + Const.CURRENT_TERM;
-            ResponseEntity<String> experiments = Requests.get(url, "http://sjjx.swust.edu.cn/teachn/teachnAction/index.action", restTemplate);
+            url = baseUrls[urlIndex] + "/teachn/teachnAction/index.action?page.pageNum=" + p + "&currTeachCourseCode=&currWeek=&currYearterm=" + Const.CURRENT_TERM;
+            ResponseEntity<String> experiments = Requests.get(url, baseUrls[urlIndex] + "/teachn/teachnAction/index.action", restTemplate);
             Document parse = null;
             try {
                 parse = Jsoup.parse(experiments.getBody());
