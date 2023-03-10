@@ -18,12 +18,8 @@ spring:
 
 cache:
   default:
-    expire-time: 3600
+    expire-time: 46800
 
 logging:
   file:
     path: ./swust-log
-
-push:
-  url: http://47.108.88.133:8081
-  signature: ShirakawaTyu

@@ -13,8 +13,10 @@ import org.shirakawatyu.handixikebackend.utils.ArrayUtils;
 import org.shirakawatyu.handixikebackend.utils.DateUtil;
 import org.shirakawatyu.handixikebackend.utils.LessonUtils;
 import org.shirakawatyu.handixikebackend.utils.Requests;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -28,16 +30,13 @@ import java.util.logging.Logger;
 @Service
 public class CacheRawCourseServiceImpl implements CacheRawCourseService {
     String[] baseUrls = {"http://sjjx.swust.edu.cn", "http://202.115.175.175"};
-    int urlIndex = 0;
+    int urlIndex = 1;
     @Cacheable(value = "Course", key = "'r'+#p1", unless = "null == #result")
     @Override
     public JSONArray getRawCourse(RestTemplate restTemplate, long no) {
-
         try {
             Requests.get(baseUrls[urlIndex] + "/swust", "", restTemplate);
         } catch (HttpClientErrorException e) {
-            Logger.getLogger("At C.R.C.S.I Line 35 => ").log(Level.WARNING, baseUrls[urlIndex] + " 接口出现问题，尝试切换至备用接口");
-            urlIndex = (urlIndex == 0) ? 1 : 0;
             Requests.get(baseUrls[urlIndex] + "/swust", "", restTemplate);
         }
 
@@ -64,7 +63,9 @@ public class CacheRawCourseServiceImpl implements CacheRawCourseService {
             String page = preDoc.getElementById("myPage").select("p").get(0).text();
             String[] pages = page.replaceAll("页", "").replaceAll(" ", "").replaceAll("第", "").replaceAll("共", "").split("/");
             allPage = Integer.parseInt(pages[1]);
-        }catch (Exception e) {
+        }
+        catch (Exception e) {
+            Logger.getLogger("At C.R.C.S.I => ").log(Level.WARNING, "实验课表获取失败");
             throw new RuntimeException(e);
         }
         // 然后循环每一页
@@ -89,7 +90,7 @@ public class CacheRawCourseServiceImpl implements CacheRawCourseService {
                     }
                     String[] timeItems = LessonUtils.timeProcess(tds.get(2).text());
                     if(timeItems == null) {
-                        Logger.getLogger("At C.R.C.S.I Line 78 => ").log(Level.WARNING, String.join("-",
+                        Logger.getLogger("At C.R.C.S.I => ").log(Level.WARNING, String.join("-",
                                 "0",
                                 tds.get(4).text(),
                                 tds.get(3).text(),
@@ -139,4 +140,9 @@ public class CacheRawCourseServiceImpl implements CacheRawCourseService {
         }
         return null;
     }
+
+    @Scheduled(cron = "0 0 0 * * ? ")
+    @CacheEvict(value = "Course", allEntries = true)
+    @Override
+    public void deleteCache() {}
 }

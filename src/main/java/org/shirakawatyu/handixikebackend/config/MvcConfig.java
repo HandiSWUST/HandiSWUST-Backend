@@ -11,13 +11,10 @@ public class MvcConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         HandlerInterceptor interceptor = new LoginInterceptor();
         registry.addInterceptor(interceptor)
-                .excludePathPatterns("/api/key")
-                .excludePathPatterns("/api/captcha")
-                .excludePathPatterns("/api/login")
-                .excludePathPatterns("/api/loginCheck")
+                .excludePathPatterns("/api/v2/login/**")
                 .excludePathPatterns("/api/gethitokoto")
                 .excludePathPatterns("/api/count")
                 .excludePathPatterns("/api/week")
-                .excludePathPatterns("/api/course/local/**");
+                .excludePathPatterns("/api/v2/course/local/**");
     }
 }

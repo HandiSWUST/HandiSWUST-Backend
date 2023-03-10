@@ -1,12 +1,13 @@
 package org.shirakawatyu.handixikebackend.service.impl;
 
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson2.JSONObject;
 import org.apache.http.cookie.Cookie;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
+import org.shirakawatyu.handixikebackend.common.Result;
 import org.shirakawatyu.handixikebackend.pojo.Library;
 import org.shirakawatyu.handixikebackend.service.LibraryService;
 import org.shirakawatyu.handixikebackend.utils.Requests;
@@ -24,10 +25,8 @@ import java.util.Map;
 @Service
 public class LibraryServiceImpl implements LibraryService {
 
-//    RestTemplate restTemplate;
-
     @Override
-    public String getLibrary(HttpSession session)  throws IOException{
+    public Result getLibrary(HttpSession session)  throws IOException{
         BasicCookieStore cookieStore = (BasicCookieStore)session.getAttribute("cookieStore");
         Cookie Tgc = cookieStore.getCookies().get(2);
         List<Cookie> cookiesStore = cookieStore.getCookies();
@@ -36,14 +35,11 @@ public class LibraryServiceImpl implements LibraryService {
            map.put(cookie.getName(), cookie.getValue());
         }
 
-
-
         RestTemplate restTemplate = (RestTemplate) session.getAttribute("template");
 
             try {
                 Connection.Response execute = Jsoup.connect("http://cas.swust.edu.cn/authserver/login?service=http://202.115.162.45:8080/reader/hwthau.php").followRedirects(false).cookies(map).execute();
 
-//                System.out.println(execute.headers());
                 List<String> locations = execute.headers("Location");
                 Connection.Response execute1 = Jsoup.connect(locations.get(0)).followRedirects(false).cookies(map).execute();
                 List<String> headers = execute1.headers("Set-Cookie");
@@ -62,9 +58,6 @@ public class LibraryServiceImpl implements LibraryService {
 
                 String text = tr.text();
                 String[] s = text.split(" ");
-//                System.out.println(Arrays.toString(s)); //9:书名  -4：地址 -6 应还日期 -7 借出日期 /~著
-
-
 
                 ArrayList<Library> books = new ArrayList<>();
                 Library library = new Library();
@@ -83,15 +76,14 @@ public class LibraryServiceImpl implements LibraryService {
                     }
 
                 }
-//                System.out.println(books);
-                return JSONObject.toJSONString(books);
+                return Result.ok().data(JSONObject.toJSONString(books));
 
 
             }catch (IOException e){
                 e.printStackTrace();
             }
 
-            return "undefined";
+            return Result.fail();
 
 
 
@@ -102,21 +94,21 @@ public class LibraryServiceImpl implements LibraryService {
     }
 
     @Override
-    public String queryBooks(HttpSession session, String bookName, int page) throws IOException {
+    public Result queryBooks(HttpSession session, String bookName, int page) throws IOException {
         String[] token = (String[])session.getAttribute("token");
         String requestBody = "{\"searchWords\":[{\"fieldList\":[{\"fieldCode\":\"\",\"fieldValue\":\""+bookName+"\"}]}],\"filters\":[],\"limiter\":[],\"sortField\":\"relevance\",\"sortType\":\"desc\",\"pageSize\":20,\"pageCount\":"+page+",\"locale\":\"\",\"first\":true}";
         String url = "http://202.115.162.45:8080/opac/ajax_search_adv.php";
         Document post = Jsoup.connect(url).header("Content-Type", "application/json").requestBody(requestBody).cookie(token[0], token[1]).post();
 
-        return post.text();
+        return Result.ok().data(post.text());
     }
 
     @Override
-    public String queryLocation(HttpSession session, String id) throws IOException {
+    public Result queryLocation(HttpSession session, String id) throws IOException {
         String[] token = (String[])session.getAttribute("token");
         String url = "http://202.115.162.45:8080/opac/ajax_item.php?marc_no="+id;
         Document document = Jsoup.connect(url).cookie(token[0], token[1]).get();
 
-        return document.body().html();
+        return Result.ok().data(document.body().html());
     }
 }
