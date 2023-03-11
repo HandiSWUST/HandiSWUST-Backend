@@ -141,8 +141,10 @@ public class CacheRawCourseServiceImpl implements CacheRawCourseService {
         return null;
     }
 
-    @Scheduled(cron = "0 0 0 * * ? ")
+    @Scheduled(cron = "0 0 1 * * ? ")
     @CacheEvict(value = "Course", allEntries = true)
     @Override
-    public void deleteCache() {}
+    public void deleteCache() {
+        Logger.getLogger("C.R.C.S.I => ").log(Level.INFO, "已清理缓存");
+    }
 }

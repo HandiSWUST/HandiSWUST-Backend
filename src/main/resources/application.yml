@@ -15,6 +15,8 @@ spring:
         max-active: -1
         max-idle: 10
 
+swust:
+  close-time: 1
 
 cache:
   default:

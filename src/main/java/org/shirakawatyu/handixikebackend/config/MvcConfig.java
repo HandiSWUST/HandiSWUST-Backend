@@ -16,5 +16,12 @@ public class MvcConfig implements WebMvcConfigurer {
                 .excludePathPatterns("/api/count")
                 .excludePathPatterns("/api/week")
                 .excludePathPatterns("/api/v2/course/local/**");
+        TimeInterceptor timeInterceptor = new TimeInterceptor();
+        registry.addInterceptor(timeInterceptor)
+                .excludePathPatterns("/api/v2/login/loginCheck")
+                .excludePathPatterns("/api/gethitokoto")
+                .excludePathPatterns("/api/count")
+                .excludePathPatterns("/api/week")
+                .excludePathPatterns("/api/v2/course/local/**");
     }
 }
