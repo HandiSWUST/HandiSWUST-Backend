@@ -1,5 +1,8 @@
 package org.shirakawatyu.handixikebackend.config;
 
+import com.alibaba.fastjson.JSON;
+import org.shirakawatyu.handixikebackend.common.Result;
+import org.shirakawatyu.handixikebackend.common.ResultCode;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -10,10 +13,16 @@ import java.util.GregorianCalendar;
 
 public class TimeInterceptor implements HandlerInterceptor {
     @Value("${swust.close-time}")
-    int time;
+    int closeTime;
+    @Value("${swust.start-time}")
+    int startTime;
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        GregorianCalendar calendar = new GregorianCalendar();
-        return calendar.get(Calendar.HOUR_OF_DAY) != time;
+        int hour = new GregorianCalendar().get(Calendar.HOUR_OF_DAY);
+        if (hour >= closeTime && hour <= startTime) {
+            response.getWriter().write(JSON.toJSONString(Result.fail().code(ResultCode.SERVER_CLOSE).msg("SERVER_CLOSE")));
+            return false;
+        }
+        return true;
     }
 }

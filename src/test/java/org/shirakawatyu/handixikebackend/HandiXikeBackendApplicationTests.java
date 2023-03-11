@@ -19,9 +19,6 @@ class HandiXikeBackendApplicationTests {
 
     @Test
     public void test() throws NoSuchAlgorithmException {
-        DateFormat gmtDateFormat = new SimpleDateFormat("EEE d MMM yyyy HH:mm:ss z ", Locale.ENGLISH);
-        gmtDateFormat.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
-        String format = gmtDateFormat.format(new Date());
-        System.out.println(format);
+        System.out.println(new RuntimeException().getMessage());
     }
 }

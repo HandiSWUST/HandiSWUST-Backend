@@ -17,6 +17,7 @@ spring:
 
 swust:
   close-time: 1
+  start-time: 6
 
 cache:
   default:

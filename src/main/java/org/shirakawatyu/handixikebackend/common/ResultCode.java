@@ -8,4 +8,6 @@ public interface ResultCode {
     int LOGOUT_SUCCESS = 2200;
     int HAS_LOGIN = 3200;
     int LOGOUT = 3401;
+    int TIMEOUT = 5501;
+    int SERVER_CLOSE = 5502;
 }
