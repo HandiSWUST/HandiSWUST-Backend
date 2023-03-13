@@ -2,6 +2,7 @@ package org.shirakawatyu.handixikebackend.controller;
 
 
 import cn.hutool.crypto.asymmetric.RSA;
+import org.shirakawatyu.handixikebackend.common.Result;
 import org.shirakawatyu.handixikebackend.service.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -20,34 +21,34 @@ import java.util.*;
  */
 
 @RestController
-@Scope("prototype")
+@RequestMapping("/api/v2/login")
 public class LoginController {
     @Autowired
 
     LoginService loginService;
 
-    @GetMapping("/api/key")
-    public Map<String,String> getKey(HttpSession session) {
+    @GetMapping("/key")
+    public Result getKey(HttpSession session) {
         return loginService.getKey(session);
     }
 
-    @GetMapping("/api/captcha")
-    public String getCaptcha(HttpSession session) {
+    @GetMapping("/captcha")
+    public Result getCaptcha(HttpSession session) {
         return loginService.getCaptcha(session);
     }
 
-    @PostMapping("/api/login")
-    public String login(@RequestParam("username") String username, @RequestParam("password") String password, @RequestParam("captcha") String captcha, HttpSession session) {
+    @PostMapping("/login")
+    public Result login(@RequestParam("username") String username, @RequestParam("password") String password, @RequestParam("captcha") String captcha, HttpSession session) {
         return loginService.login(username, password, captcha, session);
     }
 
-    @GetMapping("/api/logout")
-    public String logout(HttpSession session) {
+    @GetMapping("/logout")
+    public Result logout(HttpSession session) {
         return loginService.logout(session);
     }
 
-    @GetMapping("/api/loginCheck")
-    public String loginCheck(HttpSession session) {
+    @GetMapping("/loginCheck")
+    public Result loginCheck(HttpSession session) {
         return loginService.loginCheck(session);
     }
 }

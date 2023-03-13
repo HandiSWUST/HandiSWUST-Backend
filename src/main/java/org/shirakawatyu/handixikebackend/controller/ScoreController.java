@@ -2,6 +2,7 @@ package org.shirakawatyu.handixikebackend.controller;
 
 import com.fasterxml.jackson.databind.util.JSONPObject;
 import org.apache.http.client.CircularRedirectException;
+import org.shirakawatyu.handixikebackend.common.Result;
 import org.shirakawatyu.handixikebackend.service.ScoreService;
 import org.shirakawatyu.handixikebackend.utils.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,15 +23,15 @@ public class ScoreController {
     @Autowired
     ScoreService scoreService;
 
-    @GetMapping("/api/scores")
+    @GetMapping("/api/v2/extension/scores")
     @ResponseBody
-    public String scores(HttpSession session) throws CircularRedirectException {
+    public Result scores(HttpSession session) throws CircularRedirectException {
         return scoreService.getScore(session);
     }
 
-    @GetMapping("/api/gpa")
+    @GetMapping("/api/v2/extension/gpa")
     @ResponseBody
-    public String gpa(HttpSession session) throws CircularRedirectException {
+    public Result gpa(HttpSession session) throws CircularRedirectException {
         return scoreService.getGPA(session);
     }
 }

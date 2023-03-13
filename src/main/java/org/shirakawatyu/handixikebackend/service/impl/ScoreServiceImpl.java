@@ -1,12 +1,11 @@
 package org.shirakawatyu.handixikebackend.service.impl;
 
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson2.JSON;
 import org.jsoup.Jsoup;
-import org.jsoup.nodes.DataNode;
-import org.jsoup.select.Elements;
+import org.shirakawatyu.handixikebackend.common.Result;
+import org.shirakawatyu.handixikebackend.common.ResultCode;
 import org.shirakawatyu.handixikebackend.pojo.Score;
 import org.shirakawatyu.handixikebackend.service.ScoreService;
 import org.shirakawatyu.handixikebackend.utils.ArrayUtils;
@@ -16,7 +15,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpSession;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -24,22 +26,22 @@ import java.util.logging.Logger;
 public class ScoreServiceImpl implements ScoreService {
 
     @Override
-    public String getScore(HttpSession session) {
+    public Result getScore(HttpSession session) {
         RestTemplate restTemplate = (RestTemplate) session.getAttribute("template");
         List<String> scores = null;
         try {
             Requests.get("https://matrix.dean.swust.edu.cn/acadmicManager/index.cfm?event=studentPortal:DEFAULT_EVENT", "", restTemplate);
             ResponseEntity<String> responseEntity1 = Requests.get("https://matrix.dean.swust.edu.cn/acadmicManager/index.cfm?event=studentProfile:courseMark", "", restTemplate);
             scores = Jsoup.parse(responseEntity1.getBody()).getElementsByClass("UItable").select("tr").eachText();
-            return JSON.toJSONString(processScore(scores));
+            return Result.ok().data(JSON.toJSONString(processScore(scores)));
         }catch (Exception e) {
             e.printStackTrace();
             if (scores != null) Logger.getLogger("S.S.I").log(Level.WARNING, scores.toString());
-            return "3401 LOGOUT";
+            return Result.fail().code(ResultCode.LOGOUT).msg("LOGOUT");
         }
     }
     @Override
-    public String getGPA(HttpSession session) {
+    public Result getGPA(HttpSession session) {
         RestTemplate restTemplate = (RestTemplate) session.getAttribute("template");
         try {
             Requests.get("https://matrix.dean.swust.edu.cn/acadmicManager/index.cfm?event=studentPortal:DEFAULT_EVENT", "", restTemplate);
@@ -51,10 +53,10 @@ public class ScoreServiceImpl implements ScoreService {
             gpa.put("required", s[1].replace("必修课绩点", ""));
             JSONObject result = new JSONObject();
             result.put("gpa", gpa);
-            return JSON.toJSONString(result);
+            return Result.ok().data(JSON.toJSONString(result));
         } catch (Exception e) {
             e.printStackTrace();
-            return "3401 LOGOUT";
+            return Result.fail().code(ResultCode.LOGOUT).msg("LOGOUT");
         }
     }
 

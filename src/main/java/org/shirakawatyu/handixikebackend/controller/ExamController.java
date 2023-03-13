@@ -1,5 +1,6 @@
 package org.shirakawatyu.handixikebackend.controller;
 
+import org.shirakawatyu.handixikebackend.common.Result;
 import org.shirakawatyu.handixikebackend.service.impl.ExamServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,8 +14,8 @@ public class ExamController {
     @Autowired
     ExamServiceImpl examService;
 
-    @RequestMapping("/api/getExam")
-    public String getExam(HttpSession session){
+    @RequestMapping("/api/v2/extension/getExam")
+    public Result getExam(HttpSession session){
         return examService.getExam(session);
 
     }

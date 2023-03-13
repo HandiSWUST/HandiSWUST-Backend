@@ -1,12 +1,14 @@
 package org.shirakawatyu.handixikebackend.service;
 
+import org.shirakawatyu.handixikebackend.common.Result;
+
 import javax.servlet.http.HttpSession;
 import java.util.Map;
 
 public interface LoginService {
-    Map<String,String> getKey(HttpSession session);
-    String getCaptcha(HttpSession session);
-    String login(String username, String password, String captcha, HttpSession session);
-    String logout(HttpSession session);
-    public String loginCheck(HttpSession session);
+    Result getKey(HttpSession session);
+    Result getCaptcha(HttpSession session);
+    Result login(String username, String password, String captcha, HttpSession session);
+    Result logout(HttpSession session);
+    Result loginCheck(HttpSession session);
 }

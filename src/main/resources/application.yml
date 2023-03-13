@@ -15,15 +15,14 @@ spring:
         max-active: -1
         max-idle: 10
 
+swust:
+  close-time: 1
+  start-time: 6
 
 cache:
   default:
-    expire-time: 3600
+    expire-time: 46800
 
 logging:
   file:
     path: ./swust-log
-
-push:
-  url: http://47.108.88.133:8081
-  signature: ShirakawaTyu

@@ -5,6 +5,8 @@ import org.apache.http.impl.client.BasicCookieStore;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
+import org.shirakawatyu.handixikebackend.common.Result;
+import org.shirakawatyu.handixikebackend.common.ResultCode;
 import org.shirakawatyu.handixikebackend.config.InitRestTemplate;
 import org.shirakawatyu.handixikebackend.service.LoginService;
 import org.shirakawatyu.handixikebackend.utils.Requests;
@@ -36,23 +38,21 @@ public class LoginServiceImpl implements LoginService {
     int count = 1;
 
     @Override
-    public Map<String, String> getKey(HttpSession session) {
-//        List<String> cookies = ArrayUtils.arrayToList((Object[]) session.getAttribute("cookies"));
+    public Result getKey(HttpSession session) {
         RestTemplate restTemplate =(RestTemplate)session.getAttribute("template");
         if(restTemplate == null) {
             return null;
         }
         ResponseEntity<String> entity = Requests.get("http://cas.swust.edu.cn/authserver/getKey", "", restTemplate);
-//        session.setAttribute("cookies", cookies.toArray());
         String text = entity.toString();
         Map<String, String> map = new HashMap<>();
         map.put("modulus", text.substring(17, text.indexOf("\",")));
         map.put("exponent", text.substring(text.indexOf("\"exponent\":\"")+12, text.indexOf("\"},")));
-        return map;
+        return Result.ok().data(map);
     }
 
     @Override
-    public String getCaptcha(HttpSession session) {
+    public Result getCaptcha(HttpSession session) {
         BasicCookieStore cookieStore = new BasicCookieStore();
 
         RestTemplate restTemplate = InitRestTemplate.init(cookieStore);
@@ -60,20 +60,17 @@ public class LoginServiceImpl implements LoginService {
         session.setAttribute("cookieStore",cookieStore);
         ResponseEntity<byte[]> entity = restTemplate.getForEntity("http://cas.swust.edu.cn/authserver/captcha", byte[].class);
         byte[] bytes = entity.getBody();
-        return Base64.getEncoder().encodeToString(bytes);
+        return Result.ok().data(Base64.getEncoder().encodeToString(bytes));
     }
 
 
     @Override
-    public String login(String username, String password, String captcha, HttpSession session) {
+    public Result login(String username, String password, String captcha, HttpSession session) {
         RestTemplate restTemplate =(RestTemplate)session.getAttribute("template");
         CookieStore cookieStore = (CookieStore)session.getAttribute("cookieStore");
         if(restTemplate == null) {
             return null;
         }
-//        List<String> cookies = ArrayUtils.arrayToList((Object[]) session.getAttribute("cookies"));
-        // 临时改动，过后记得改回来
-//        ResponseEntity<String> res = restTemplate.getForEntity("http://cas.swust.edu.cn/authserver/login?service=http://202.115.175.175/swust/", String.class);
         ResponseEntity<String> res = restTemplate.getForEntity("http://cas.swust.edu.cn/authserver/login", String.class);
         String execution = null;
         try {
@@ -102,18 +99,16 @@ public class LoginServiceImpl implements LoginService {
             if (cookieStore.getCookies().size() >= 3) {
                 Logger.getLogger("o.s.h.s.i.LoginServiceImpl").log(Level.WARNING, "一站式大厅崩溃，但登录接口正常");
             } else if (status == 401) {
-                return "1500 LOGIN FAIL";
+                return Result.fail().code(ResultCode.LOGIN_FAIL).msg("LOGIN FAIL");
             }
             else {
-                return "1502 REMOTE SERVICE ERROR";
+                return Result.fail().code(ResultCode.REMOTE_SERVICE_ERROR).msg("REMOTE SERVICE ERROR");
             }
         }
-//        session.setAttribute("cookies", cookies.toArray());
         session.setAttribute("template", restTemplate);
         count++;
 
         // 临时改动，过后记得改回来
-//        if(entity != null && entity.getBody() != null && entity.getBody().contains("西南科技大学学生实践教学自助学习系统")) {
         if(entity != null && entity.getBody() != null && entity.getBody().contains("location.href = '/sys/portal/page.jsp';") || cookieStore.getCookies().size() >= 3) {
             session.setAttribute("status", true);
             session.setAttribute("cookieStore", cookieStore);
@@ -122,27 +117,26 @@ public class LoginServiceImpl implements LoginService {
             redisTemplate.opsForHash().increment("count", new SimpleDateFormat("yyyy-MM-dd").format(new Date()), 1);
             // 日活统计
             redisTemplate.opsForHyperLogLog().add("DAU:" + new SimpleDateFormat("yyyy-MM-dd").format(new Date()), username);
-            return "1200 LOGIN SUCCESS";
+            return Result.ok().code(ResultCode.LOGIN_SUCCESS).msg("LOGIN SUCCESS");
         }
-        return "1500 LOGIN FAIL";
+        return Result.fail().code(ResultCode.LOGIN_FAIL).msg("LOGIN FAIL");
     }
 
     @Override
-    public String logout(HttpSession session) {
+    public Result logout(HttpSession session) {
         RestTemplate restTemplate =(RestTemplate)session.getAttribute("template");
-
-//        List<String> cookies = ArrayUtils.arrayToList((Object[]) session.getAttribute("cookies"));
         Requests.get("http://myo.swust.edu.cn/mht_shall/a/logout", "http://myo.swust.edu.cn/mht_shall/a/service/serviceFrontManage", restTemplate);
-//        session.removeAttribute("cookies");
         session.removeAttribute("status");
         session.removeAttribute("template");
         session.removeAttribute("cookieStore");
-        return "2200 LOGOUT SUCCESS";
+        return Result.ok().code(ResultCode.LOGOUT_SUCCESS).msg("LOGOUT SUCCESS");
     }
 
 
-    public String loginCheck(HttpSession session) {
-        if(session.getAttribute("status") == null) return "3401 LOGOUT";
-        return "3200 LOGIN";
+    public Result loginCheck(HttpSession session) {
+        if (session.getAttribute("status") == null) {
+            return Result.ok().code(ResultCode.LOGOUT).msg("LOGOUT");
+        }
+        return Result.ok().code(ResultCode.HAS_LOGIN).msg("LOGIN");
     }
 }
