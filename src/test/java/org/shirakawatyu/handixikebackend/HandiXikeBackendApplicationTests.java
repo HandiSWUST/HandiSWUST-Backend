@@ -10,15 +10,13 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-import java.util.TimeZone;
+import java.util.*;
 
 @SpringBootTest
 class HandiXikeBackendApplicationTests {
 
     @Test
     public void test() throws NoSuchAlgorithmException {
-        System.out.println(new RuntimeException().getMessage());
+        System.out.println( new GregorianCalendar().get(Calendar.HOUR_OF_DAY));
     }
 }
