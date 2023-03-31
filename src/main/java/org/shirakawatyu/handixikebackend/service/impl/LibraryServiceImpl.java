@@ -64,9 +64,7 @@ public class LibraryServiceImpl implements LibraryService {
                     }
 
                 }
-                return Result.ok().data(JSONObject.toJSONString(books));
-
-
+                  return Result.ok().data(books);
             } catch (Exception e){
                 e.printStackTrace();
             }
