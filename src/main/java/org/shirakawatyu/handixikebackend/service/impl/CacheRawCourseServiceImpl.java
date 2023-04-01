@@ -2,6 +2,7 @@ package org.shirakawatyu.handixikebackend.service.impl;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
+import com.alibaba.fastjson2.JSONException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -51,8 +52,13 @@ public class CacheRawCourseServiceImpl implements CacheRawCourseService {
 
         // 转码，不然会乱码
         String lessons = new String(entity.getBody().getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
-        JSONArray lessonsArray = JSON.parseArray(lessons);
-
+        JSONArray lessonsArray = null;
+        try {
+            lessonsArray = JSON.parseArray(lessons);
+        } catch (JSONException e) {
+            Logger.getLogger("At C.R.C.S.I JSONException => ").log(Level.WARNING, "错误JSON字符串：" + lessons);
+            return null;
+        }
         // 拿到实验课表
         // 预请求一次得到页数
         String url = baseUrls[urlIndex] + "/teachn/teachnAction/index.action?page.pageNum=2&currTeachCourseCode=&currWeek=&currYearterm=" + Const.CURRENT_TERM;
