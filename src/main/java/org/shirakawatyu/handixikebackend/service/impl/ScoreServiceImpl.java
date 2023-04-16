@@ -93,7 +93,7 @@ public class ScoreServiceImpl implements ScoreService {
                         }
                     }
                     String[] s = course.split(" ");
-                    objects1.add(new Score("【" + s[0], s[1] + "",  s[2], s[3] + "】"));
+                    objects1.add(new Score("【" + s[0], s[1] + "",  s[2], s[3]));
                     hashMap.put(title1, objects1);
 
                     if (iterator.hasNext()) term = iterator.next();
@@ -116,11 +116,9 @@ public class ScoreServiceImpl implements ScoreService {
                     } else if (s.length == 7) {
                         ArrayUtils.addSecondLast(objects, new Score(s[1], s[3], "其他", s[5]));
                     }
-
                     if (iterator.hasNext()) next = iterator.next();
                     else break;
                 }
-
                 if (iterator.hasNext()) next = iterator.next();
                 else break;
 
