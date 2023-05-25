@@ -4,13 +4,11 @@ import org.springframework.http.*;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
- * @description: 封装的发送请求
+ * 封装的发送请求
  * @author ShirakawaTyu
- * @date: 2022/10/1 17:45
+ * @since 2022/10/1 17:45
  */
 public class Requests {
     /**
@@ -19,9 +17,9 @@ public class Requests {
      * 使用时，传入需要请求的url，referer(来源，为了反反爬虫，如果不需要用到请传入""字符串)，cookies，restTemplate(在外部Autowire一个传进来就行)。
      * 返回一个ResponseEntity<String>对象，通过这个对象可以获得需要的数据
      *
-     * @param url
-     * @param referer
-     * @param restTemplate
+     * @param url 请求url
+     * @param referer 来源
+     * @param restTemplate RestTemplate对象
      * @return get1
      */
     public static ResponseEntity<String> get(String url, String referer, RestTemplate restTemplate) {
@@ -33,8 +31,7 @@ public class Requests {
         MultiValueMap<String, String> map1= new LinkedMultiValueMap<>();
         HttpEntity<MultiValueMap<String, String>> httpEntity1 = new HttpEntity<>(map1, headers);
 
-        ResponseEntity<String> get1 = restTemplate.exchange(url, HttpMethod.GET, httpEntity1, String.class);
-        return get1;
+        return restTemplate.exchange(url, HttpMethod.GET, httpEntity1, String.class);
     }
 
     /**
@@ -43,17 +40,16 @@ public class Requests {
      * 使用时，传入需要请求的url，cookies，data(需要携带的表单参数，如果没参数请传一个空的MultiValueMap)，restTemplate(在外部Autowire一个传进来就行)。
      * 返回一个ResponseEntity<String>对象，通过这个对象可以获得需要的数据
      *
-     * @param url
-     * @param data
-     * @param restTemplate
+     * @param url 请求url
+     * @param data 请求参数
+     * @param restTemplate RestTemplate对象
      * @return entity
      */
     public static ResponseEntity<String> post(String url, MultiValueMap<String, String> data, RestTemplate restTemplate) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         HttpEntity<MultiValueMap<String, String>> httpEntity = new HttpEntity<>(data, headers);
-        ResponseEntity<String> entity = restTemplate.exchange(url, HttpMethod.POST, httpEntity, String.class);
-        return entity;
+        return restTemplate.exchange(url, HttpMethod.POST, httpEntity, String.class);
     }
 
 }

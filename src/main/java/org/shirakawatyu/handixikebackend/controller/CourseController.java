@@ -1,11 +1,10 @@
 package org.shirakawatyu.handixikebackend.controller;
 
+import jakarta.servlet.http.HttpSession;
 import org.shirakawatyu.handixikebackend.common.Result;
 import org.shirakawatyu.handixikebackend.service.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpSession;
 
 @RestController
 public class CourseController {

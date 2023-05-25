@@ -1,6 +1,7 @@
 package org.shirakawatyu.handixikebackend.service.impl;
 
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson2.JSONObject;
+import jakarta.servlet.http.HttpSession;
 import org.jsoup.Jsoup;
 import org.shirakawatyu.handixikebackend.common.Result;
 import org.shirakawatyu.handixikebackend.pojo.Exam;
@@ -10,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -39,19 +39,12 @@ public class ExamServiceImpl implements ExamService {
                 map.put("补考(已考完的科目仍然显示的话，是教务系统的锅)",re);
                 break;
             }
-
-
             Exam exam = new Exam(strings[aid],strings[1+aid],strings[2+aid],strings[3+aid],strings[4+aid],
                     strings[5+aid],strings[6+aid],strings[7+aid],strings[8+aid]);
             exams.add(exam);
         }
         map.put("期末考试",exams);
-
-
        return JSONObject.toJSONString(map);
-
-
-
     }
 
 
@@ -68,9 +61,6 @@ public class ExamServiceImpl implements ExamService {
         } catch (Exception e){
             e.printStackTrace();
         }
-
         return Result.fail().msg("s");
     }
-
-
 }
