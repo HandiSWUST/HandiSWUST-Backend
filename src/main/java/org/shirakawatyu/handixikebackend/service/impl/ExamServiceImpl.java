@@ -12,6 +12,7 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -39,14 +40,11 @@ public class ExamServiceImpl implements ExamService {
                 map.put("补考(已考完的科目仍然显示的话，是教务系统的锅)",re);
                 break;
             }
-
-
             Exam exam = new Exam(strings[aid],strings[1+aid],strings[2+aid],strings[3+aid],strings[4+aid],
                     strings[5+aid],strings[6+aid],strings[7+aid],strings[8+aid]);
             exams.add(exam);
         }
         map.put("期末考试",exams);
-
 
        return JSONObject.toJSONString(map);
 
@@ -63,6 +61,7 @@ public class ExamServiceImpl implements ExamService {
             ResponseEntity<String> doc = Requests.get("https://matrix.dean.swust.edu.cn/acadmicManager/index.cfm?event=studentPortal:examTable", "", restTemplate);
             String info = Jsoup.parse(doc.getBody()).getElementsByTag("td").text();
             String[] s = info.split(" ");
+            if(s[0].equals(""))return Result.fail().msg("sys err");
             if (s.length<9) return Result.fail().msg("no data");
             return Result.ok().data(setExamList(s));
         } catch (Exception e){
