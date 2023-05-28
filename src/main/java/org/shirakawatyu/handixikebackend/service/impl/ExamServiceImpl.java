@@ -56,6 +56,7 @@ public class ExamServiceImpl implements ExamService {
             ResponseEntity<String> doc = Requests.get("https://matrix.dean.swust.edu.cn/acadmicManager/index.cfm?event=studentPortal:examTable", "", restTemplate);
             String info = Jsoup.parse(doc.getBody()).getElementsByTag("td").text();
             String[] s = info.split(" ");
+            if(s[0].equals(""))return Result.fail().msg("sys err");
             if (s.length<9) return Result.fail().msg("no data");
             return Result.ok().data(setExamList(s));
         } catch (Exception e){
