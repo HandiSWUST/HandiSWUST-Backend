@@ -1,10 +1,7 @@
 package org.shirakawatyu.handixikebackend.api.impl;
 
-import com.alibaba.fastjson2.JSON;
 import org.jsoup.Jsoup;
 import org.shirakawatyu.handixikebackend.api.ScoreApi;
-import org.shirakawatyu.handixikebackend.common.Result;
-import org.shirakawatyu.handixikebackend.common.ResultCode;
 import org.shirakawatyu.handixikebackend.pojo.GradePointAverage;
 import org.shirakawatyu.handixikebackend.utils.Requests;
 import org.shirakawatyu.handixikebackend.utils.ScoreUtils;
@@ -40,8 +37,8 @@ public class MatrixScoreApi implements ScoreApi {
     public LinkedHashMap<String, ArrayList<Object>> getScore(RestTemplate restTemplate) {
         List<String> scores = null;
         try {
-            Requests.get("https://matrix.dean.swust.edu.cn/acadmicManager/index.cfm?event=studentPortal:DEFAULT_EVENT", "", restTemplate);
-            ResponseEntity<String> responseEntity1 = Requests.get("https://matrix.dean.swust.edu.cn/acadmicManager/index.cfm?event=studentProfile:courseMark", "", restTemplate);
+            Requests.get( scoreUrl + "?event=studentPortal:DEFAULT_EVENT", "", restTemplate);
+            ResponseEntity<String> responseEntity1 = Requests.get(scoreUrl + "?event=studentProfile:courseMark", "", restTemplate);
             scores = Jsoup.parse(responseEntity1.getBody()).getElementsByClass("UItable").select("tr").eachText();
             return processScore(scores);
         } catch (Exception e) {
