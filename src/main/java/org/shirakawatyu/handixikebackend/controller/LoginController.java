@@ -1,23 +1,16 @@
 package org.shirakawatyu.handixikebackend.controller;
 
 
-import cn.hutool.crypto.asymmetric.RSA;
+import jakarta.servlet.http.HttpSession;
 import org.shirakawatyu.handixikebackend.common.Result;
 import org.shirakawatyu.handixikebackend.service.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.annotation.RequestScope;
 
-import javax.servlet.http.HttpSession;
-import java.math.BigInteger;
-import java.security.PublicKey;
-import java.util.*;
 /**
- * @description: 与认证相关的接口
+ * 与认证相关的接口
  * @author ShirakawaTyu
- * @date: 2022/10/1 17:40
+ * @since 2022/10/1 17:40
  */
 
 @RestController

@@ -1,6 +1,9 @@
 package org.shirakawatyu.handixikebackend.pojo;
 
-public class Lesson {
+import java.io.Serializable;
+
+
+public class Lesson implements Serializable {
     String jw_course_code;
     String base_teacher_name;
     String base_room_name;
@@ -12,6 +15,9 @@ public class Lesson {
     String section;
     String base_teacher_no;
     String section_start;
+
+    public Lesson() {
+    }
 
     public Lesson(String jw_course_code, String base_teacher_name, String base_room_name, String week, String jw_task_book_no, String jw_course_name, String section_end, String week_day, String section, String base_teacher_no, String section_start) {
         this.jw_course_code = jw_course_code;

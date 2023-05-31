@@ -1,9 +1,8 @@
 package org.shirakawatyu.handixikebackend.service;
 
+import jakarta.servlet.http.HttpSession;
 import org.shirakawatyu.handixikebackend.common.Result;
 
-import javax.servlet.http.HttpSession;
-import java.util.Map;
 
 public interface LoginService {
     Result getKey(HttpSession session);

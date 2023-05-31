@@ -1,10 +1,9 @@
 package org.shirakawatyu.handixikebackend.service;
 
+import jakarta.servlet.http.HttpSession;
 import org.shirakawatyu.handixikebackend.common.Result;
 
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.List;
 
 public interface LibraryService {
     Result getLibrary(HttpSession session) throws IOException;
