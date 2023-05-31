@@ -19,7 +19,7 @@ import java.util.logging.Logger;
 
 @Component("NormalCourseApi")
 public class NormalCourseApi implements CourseApi {
-    private static final String baseUrl = "http://202.115.175.175";
+    private static final String baseUrl = "http://sjjx.swust.edu.cn";
     @Override
     public List<Lesson> getCourse(RestTemplate restTemplate) {
         Requests.get(baseUrl + "/swust", "", restTemplate);

@@ -21,7 +21,7 @@ import java.util.logging.Logger;
 
 @Component("ExperimentCourseApi")
 public class ExperimentCourseApi implements CourseApi {
-    private static final String baseUrl = "http://202.115.175.175";
+    private static final String baseUrl = "http://sjjx.swust.edu.cn";
     private static final String referer = baseUrl + "/teachn/teachnAction/index.action";
 
     @Override
