@@ -62,6 +62,8 @@ public class MatrixScoreApi implements ScoreApi {
         ScoreUtils.cetScoreFilter(scores, hashMap);
         if (hashMap.size() == 0)
             return null;
+        if (!scores.isEmpty())
+            Logger.getLogger("MatrixScoreApi.processScore => ").log(Level.WARNING, scores.toString());
         return hashMap;
     }
 }
