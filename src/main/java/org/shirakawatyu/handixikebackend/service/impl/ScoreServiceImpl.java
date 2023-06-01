@@ -5,22 +5,16 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpSession;
-import org.jsoup.Jsoup;
 import org.shirakawatyu.handixikebackend.api.ScoreApi;
 import org.shirakawatyu.handixikebackend.common.Result;
 import org.shirakawatyu.handixikebackend.common.ResultCode;
 import org.shirakawatyu.handixikebackend.pojo.GradePointAverage;
-import org.shirakawatyu.handixikebackend.pojo.Score;
 import org.shirakawatyu.handixikebackend.service.ScoreService;
-import org.shirakawatyu.handixikebackend.utils.ArrayUtils;
-import org.shirakawatyu.handixikebackend.utils.Requests;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 
 @Service
 public class ScoreServiceImpl implements ScoreService {

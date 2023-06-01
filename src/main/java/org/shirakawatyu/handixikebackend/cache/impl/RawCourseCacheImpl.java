@@ -40,6 +40,6 @@ public class RawCourseCacheImpl implements RawCourseCache {
     @CacheEvict(value = "Course", allEntries = true)
     @Override
     public void deleteCache() {
-        Logger.getLogger("C.R.C.S.I => ").log(Level.INFO, "已清理缓存");
+        Logger.getLogger("RawCourseCacheImpl => ").log(Level.INFO, "已清理缓存");
     }
 }

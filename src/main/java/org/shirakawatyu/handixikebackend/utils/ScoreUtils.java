@@ -24,16 +24,19 @@ public class ScoreUtils {
             while (term.equals("春") || term.equals("秋")) {
                 ArrayList<Object> scoreList = new ArrayList<>();
                 String title1, course;
-
-                if (term.equals("秋")) title1 = next.split(" ")[0] + "-1";
-                else title1 = next.split(" ")[0] + "-2";
-
-                if (!scores.isEmpty()) course = scores.poll();
-                else break;
+                if (term.equals("秋"))
+                    title1 = next.split(" ")[0] + "-1";
+                else
+                    title1 = next.split(" ")[0] + "-2";
+                if (!scores.isEmpty())
+                    course = scores.poll();
+                else
+                    break;
                 while (!course.contains("平均学分绩点")) {
-                    if (!scores.isEmpty()) course = scores.poll();
-                    else break;
-
+                    if (!scores.isEmpty())
+                        course = scores.poll();
+                    else
+                        break;
                     String[] s = course.split(" ");
                     if (s.length == 6) {
                         scoreList.add(new Score(s[0], s[2], s[3], s[4]));
@@ -98,13 +101,11 @@ public class ScoreUtils {
             scores.poll();
         else
             return;
-        while (!scores.isEmpty()) {
-            ArrayList<Object> objects = new ArrayList<>();
-            while (!scores.isEmpty() && scores.peek().contains("CET")) {
-                String[] s = scores.poll().split(" ");
-                objects.add(new Score(s[4], "0", "其他", s[5]));
-            }
-            target.put("外语等级考试", objects);
+        ArrayList<Object> objects = new ArrayList<>();
+        while (!scores.isEmpty() && scores.peek().contains("CET")) {
+            String[] s = scores.poll().split(" ");
+            objects.add(new Score(s[4], "0", "其他", s[5]));
         }
+        target.put("外语等级考试", objects);
     }
 }
