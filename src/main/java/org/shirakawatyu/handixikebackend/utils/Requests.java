@@ -1,5 +1,6 @@
 package org.shirakawatyu.handixikebackend.utils;
 
+import jakarta.servlet.http.HttpSession;
 import org.springframework.http.*;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -12,6 +13,16 @@ import org.springframework.web.client.RestTemplate;
  */
 public class Requests {
     /**
+     * 本方法用于获取session中的restTemplate
+     *
+     * @param session tomcat的session实例
+
+     * @return restTemplate
+     */
+    public static RestTemplate getRestTemplate(HttpSession session){
+        return (RestTemplate)session.getAttribute("template");
+    }
+    /**
      * 本方法用于发起get请求，本质上是对RestTemplate的封装
      * <p>
      * 使用时，传入需要请求的url，referer(来源，为了反反爬虫，如果不需要用到请传入""字符串)，cookies，restTemplate(在外部Autowire一个传进来就行)。
@@ -22,6 +33,7 @@ public class Requests {
      * @param restTemplate RestTemplate对象
      * @return get1
      */
+
     public static ResponseEntity<String> get(String url, String referer, RestTemplate restTemplate) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
