@@ -32,25 +32,19 @@ public class CourseServiceImpl implements CourseService {
         return Result.fail();
     }
 
-    @Cacheable(value = "Course", key = "'c'+#p1", unless = "null == #result")
+    @Cacheable(value = "Course", key = "'c'+#p1", unless = "#result.data eq '[]'")
     @Override
     public Result courseCurWeek(HttpSession session, long no) {
         List<Lesson> lessonList = rawCourse.getRawCourse((RestTemplate) session.getAttribute("template"), no);
         String s = LessonUtils.simpleSelectWeek(Integer.parseInt(DateUtil.curWeek()), lessonList);
-        if (s.equals("[]")) {
-            return null;
-        }
         return Result.ok().data(s);
     }
 
-    @Cacheable(value = "Course", key = "'s'+#p2+'s'+#p1", unless = "null == #result")
+    @Cacheable(value = "Course", key = "'s'+#p2+'s'+#p1", unless = "#result.data eq '[]'")
     @Override
     public Result courseSelectedWeek(HttpSession session, long no, int selectedWeek) {
         List<Lesson> lessonList = rawCourse.getRawCourse((RestTemplate) session.getAttribute("template"), no);
         String s = LessonUtils.simpleSelectWeek(selectedWeek, lessonList);
-        if (s.equals("[]")) {
-            return null;
-        }
         return Result.ok().data(s);
     }
 
