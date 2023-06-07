@@ -38,7 +38,7 @@ public class ScoreUtils {
                     else
                         break;
                     String[] s = course.split(" ");
-                    if (s.length == 6) {
+                    if (s.length == 6 || s.length == 5) {
                         scoreList.add(new Score(s[0], s[2], s[3], s[4]));
                     } else if (s.length == 7){
                         scoreList.add(new Score(s[0], s[2], s[3], s[5]));
