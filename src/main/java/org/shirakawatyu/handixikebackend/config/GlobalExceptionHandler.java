@@ -1,5 +1,6 @@
 package org.shirakawatyu.handixikebackend.config;
 
+import org.shirakawatyu.handixikebackend.aop.ApiLayerAspect;
 import org.shirakawatyu.handixikebackend.common.Result;
 import org.shirakawatyu.handixikebackend.common.ResultCode;
 import org.springframework.http.HttpHeaders;
@@ -25,7 +26,7 @@ public class GlobalExceptionHandler {
                 break;
             }
         }
-        Logger.getLogger("GlobalExceptionHandler")
+        Logger.getLogger("GlobalExceptionHandler => ")
                 .log(Level.WARNING, "Timeout: " + classLocation);
         return Result.fail().code(ResultCode.TIMEOUT).msg("TIMEOUT");
     }
@@ -38,5 +39,10 @@ public class GlobalExceptionHandler {
                     .log(Level.WARNING, "500 Internal Server Error: " + responseHeaders.getHost().getHostName());
         }
         return Result.fail().code(ResultCode.REMOTE_SERVICE_ERROR).msg("REMOTE_SERVICE_ERROR");
+    }
+
+    @ExceptionHandler(value = ApiLayerAspect.CircuitBreakerException.class)
+    public Result CircuitBreakerExceptionHandler() {
+        return Result.fail().code(ResultCode.TIMEOUT).msg("TIMEOUT");
     }
 }

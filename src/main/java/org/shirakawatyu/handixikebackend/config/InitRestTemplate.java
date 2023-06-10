@@ -28,7 +28,8 @@ public class InitRestTemplate {
 
         HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
         RequestConfig requestConfig = RequestConfig.custom()
-                .setConnectionRequestTimeout(Timeout.ofMilliseconds(5000))
+                .setConnectionRequestTimeout(Timeout.ofMilliseconds(3000))
+                .setResponseTimeout(Timeout.ofMilliseconds(3000))
                 .setCircularRedirectsAllowed(true)
                 .setCookieSpec(StandardCookieSpec.RELAXED)
                 .build();
