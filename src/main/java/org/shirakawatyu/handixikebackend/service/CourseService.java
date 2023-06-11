@@ -5,8 +5,8 @@ import org.shirakawatyu.handixikebackend.common.Result;
 
 
 public interface CourseService {
-    Result course(HttpSession session, long no);
-    Result courseCurWeek(HttpSession session, long no);
-    Result courseSelectedWeek(HttpSession session, long no, int selectedWeek);
+    Result course(HttpSession session, String no);
+    Result courseCurWeek(HttpSession session, String no);
+    Result courseSelectedWeek(HttpSession session, String no, int selectedWeek);
     Result useLocalCourse(int selectedWeek, String courseData);
 }

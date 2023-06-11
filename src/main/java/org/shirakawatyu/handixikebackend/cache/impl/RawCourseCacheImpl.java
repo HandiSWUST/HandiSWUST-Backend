@@ -25,7 +25,7 @@ public class RawCourseCacheImpl implements RawCourseCache {
 
     @Cacheable(value = "Course", key = "'r'+#p1", unless = "null == #result")
     @Override
-    public List<Lesson> getRawCourse(RestTemplate restTemplate, long no) {
+    public List<Lesson> getRawCourse(RestTemplate restTemplate, String no) {
         List<Lesson> lessonsArray = new ArrayList<>();
         lessonsArray.addAll(normalCourseApi.getCourse(restTemplate));
         lessonsArray.addAll(experimentCourseApi.getCourse(restTemplate));

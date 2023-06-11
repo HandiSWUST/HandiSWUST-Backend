@@ -23,7 +23,7 @@ public class CourseServiceImpl implements CourseService {
 
     // 不做处理返回所有课程的原值
     @Override
-    public Result course(HttpSession session, long no) {
+    public Result course(HttpSession session, String no) {
         List<Lesson> lessonList = rawCourse.getRawCourse((RestTemplate) session.getAttribute("template"), no);
         JSONArray lessonsArray = new JSONArray(lessonList);
         if(lessonsArray.size() > 0) {
@@ -34,7 +34,7 @@ public class CourseServiceImpl implements CourseService {
 
     @Cacheable(value = "Course", key = "'c'+#p1", unless = "#result.data eq '[]'")
     @Override
-    public Result courseCurWeek(HttpSession session, long no) {
+    public Result courseCurWeek(HttpSession session, String no) {
         List<Lesson> lessonList = rawCourse.getRawCourse((RestTemplate) session.getAttribute("template"), no);
         String s = LessonUtils.simpleSelectWeek(Integer.parseInt(DateUtil.curWeek()), lessonList);
         return Result.ok().data(s);
@@ -42,7 +42,7 @@ public class CourseServiceImpl implements CourseService {
 
     @Cacheable(value = "Course", key = "'s'+#p2+'s'+#p1", unless = "#result.data eq '[]'")
     @Override
-    public Result courseSelectedWeek(HttpSession session, long no, int selectedWeek) {
+    public Result courseSelectedWeek(HttpSession session, String no, int selectedWeek) {
         List<Lesson> lessonList = rawCourse.getRawCourse((RestTemplate) session.getAttribute("template"), no);
         String s = LessonUtils.simpleSelectWeek(selectedWeek, lessonList);
         return Result.ok().data(s);

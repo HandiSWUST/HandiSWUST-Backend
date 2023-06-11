@@ -16,18 +16,18 @@ public class CourseController {
 
     @GetMapping("/api/v2/course/all")
     public Result course(HttpSession session) {
-        long no = Long.parseLong((String) session.getAttribute("no"));
+        String no = (String) session.getAttribute("no");
         return courseService.course(session, no);
     }
 
     @GetMapping("/api/v2/course/cur")
     public Result curCourse(HttpSession session) {
-        long no = Long.parseLong((String) session.getAttribute("no"));
+        String no = (String) session.getAttribute("no");
         return courseService.courseCurWeek(session, no);
     }
     @GetMapping("/api/v2/course/select/{selectedWeek}")
     public Result selectedCourse(@PathVariable int selectedWeek, HttpSession session) {
-        long no = Long.parseLong((String) session.getAttribute("no"));
+        String no = (String) session.getAttribute("no");
         return courseService.courseSelectedWeek(session, no, selectedWeek);
 
     }
