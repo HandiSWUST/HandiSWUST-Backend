@@ -18,8 +18,10 @@ import java.util.logging.Logger;
 public class ApiLayerAspect {
     private final HashMap<String, Integer> timeoutCounts = new HashMap<>();
     private final HashMap<String, Long> breakTime = new HashMap<>();
-    private final int THRESHOLD = 10;
-    private final long BREAK_MILLISECOND = 60000;
+    private final int THRESHOLD = 20;    // 超时阈值，单位：次
+    private final long BREAK_MILLISECOND = 120000;    // 熔断时间，单位：ms
+    private final long CIRCLE = 60000;    // 统计周期，单位：ms
+    private long lastTime = System.currentTimeMillis();
     @Pointcut("execution(* org.shirakawatyu.handixikebackend.api.impl.*.*(..))")
     public void exception() {}
 
@@ -35,9 +37,10 @@ public class ApiLayerAspect {
                 breakTime.remove(method);
             }
         }
-        if (throwTimes == null) {
+        if (throwTimes == null || System.currentTimeMillis() > lastTime + CIRCLE) {
             timeoutCounts.put(method, 0);
             throwTimes = 0;
+            lastTime = System.currentTimeMillis();
         } else if (throwTimes >= THRESHOLD) {
             breakTime.put(method, System.currentTimeMillis());
             timeoutCounts.put(method, 0);
