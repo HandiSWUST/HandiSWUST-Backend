@@ -37,8 +37,8 @@ public class ExperimentCourseApi implements CourseApi {
             String[] pages = page.replaceAll("页", "").replaceAll(" ", "").replaceAll("第", "").replaceAll("共", "").split("/");
             allPage = Integer.parseInt(pages[1]);
         } catch (Exception e) {
-            logger.log(Level.WARNING, "实验课表获取失败");
-            throw new RuntimeException(e);
+            logger.log(Level.SEVERE, "实验课表获取失败");
+            return null;
         }
 
         // 然后循环每一页
@@ -49,7 +49,8 @@ public class ExperimentCourseApi implements CourseApi {
             try {
                 parse = Jsoup.parse(Objects.requireNonNull(experiments.getBody()));
             }catch (Exception e) {
-                throw new RuntimeException(e);
+                logger.log(Level.SEVERE, "实验课表获取失败");
+                return null;
             }
             Elements tabson = parse.getElementsByClass("tabson");
             Elements tbody = tabson.select("tbody");

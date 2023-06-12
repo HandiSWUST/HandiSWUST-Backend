@@ -27,9 +27,14 @@ public class RawCourseCacheImpl implements RawCourseCache {
     @Override
     public List<Lesson> getRawCourse(RestTemplate restTemplate, String no) {
         List<Lesson> lessonsArray = new ArrayList<>();
-        lessonsArray.addAll(normalCourseApi.getCourse(restTemplate));
-        lessonsArray.addAll(experimentCourseApi.getCourse(restTemplate));
-        if(lessonsArray.size() > 0) {
+        List<Lesson> normalCourse = normalCourseApi.getCourse(restTemplate);
+        List<Lesson> experimentCourse = experimentCourseApi.getCourse(restTemplate);
+        if (normalCourse == null || experimentCourse == null) {
+            return null;
+        }
+        lessonsArray.addAll(normalCourse);
+        lessonsArray.addAll(experimentCourse);
+        if (lessonsArray.size() > 0) {
             ArrayUtils.nullObjChk(lessonsArray);
             return lessonsArray;
         }

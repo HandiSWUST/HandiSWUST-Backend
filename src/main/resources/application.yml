@@ -19,6 +19,11 @@ spring:
 swust:
   close-time: 1
   start-time: 6
+  api:
+    breaker:
+      threshold: 20
+      break-millisecond: 120000
+      circle: 60000
 
 cache:
   default:

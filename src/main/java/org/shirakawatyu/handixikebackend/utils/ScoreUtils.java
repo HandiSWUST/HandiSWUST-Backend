@@ -102,7 +102,7 @@ public class ScoreUtils {
         else
             return;
         ArrayList<Object> objects = new ArrayList<>();
-        while (!scores.isEmpty() && scores.peek().contains("CET")) {
+        while (!scores.isEmpty() && (scores.peek().contains("CET") || scores.peek().contains("CJT"))) {
             String[] s = scores.poll().split(" ");
             objects.add(new Score(s[4], "0", "其他", s[5]));
         }
