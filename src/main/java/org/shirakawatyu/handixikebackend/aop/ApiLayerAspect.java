@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.ResourceAccessException;
 
+import java.io.EOFException;
 import java.net.SocketTimeoutException;
 import java.util.HashMap;
 import java.util.logging.Level;
@@ -52,7 +53,7 @@ public class ApiLayerAspect {
             breakTime.put(method, System.currentTimeMillis());
             cnt.times = 0;
             cnt.lastCountTime = System.currentTimeMillis();
-            Logger.getLogger("ApiLayerAspect => ").log(Level.WARNING, method + " 超时次数过多，触发熔断 " + BREAK_MILLISECOND + "ms");
+            Logger.getLogger("ApiLayerAspect => ").log(Level.WARNING, method + " 错误次数过多，触发熔断 " + BREAK_MILLISECOND + "ms");
             throw new CircuitBreakerException();
         }
         try {
@@ -73,6 +74,13 @@ public class ApiLayerAspect {
             cnt.times++;
             Logger.getLogger("ApiLayerAspect => ").log(Level.WARNING, "Bad Gateway: " + method + " " + cnt.times);
             throw new CircuitBreakerException();
+        } catch (EOFException e) {
+            if (e.getMessage().contains("SSL peer")) {
+                cnt.times++;
+                Logger.getLogger("ApiLayerAspect => ").log(Level.WARNING, "SSL peer shut down incorrectly: " + method + " " + cnt.times);
+                throw new CircuitBreakerException();
+            }
+            throw new RuntimeException(e);
         } catch (Throwable e) {
             throw new RuntimeException(e);
         }
