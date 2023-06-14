@@ -11,6 +11,7 @@ import org.shirakawatyu.handixikebackend.utils.LessonUtils;
 import org.shirakawatyu.handixikebackend.utils.Requests;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
@@ -38,7 +39,7 @@ public class ExperimentCourseApi implements CourseApi {
             allPage = Integer.parseInt(pages[1]);
         } catch (Exception e) {
             logger.log(Level.SEVERE, "实验课表获取失败");
-            return null;
+            throw e;
         }
 
         // 然后循环每一页

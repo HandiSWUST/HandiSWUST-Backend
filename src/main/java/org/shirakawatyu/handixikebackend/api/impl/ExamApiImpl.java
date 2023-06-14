@@ -66,9 +66,9 @@ public class ExamApiImpl implements ExamApi {
             if (s.length<9) return "no data";
             return setExamList(s);
         } catch (Exception e){
-            e.printStackTrace();
             log.log(Level.SEVERE,"可能是登录凭证过期了，八成不会出这个问题");
+            throw e;
         }
-        return "s";
+//        return "s";
     }
 }

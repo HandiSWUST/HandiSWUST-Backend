@@ -33,7 +33,7 @@ public class MatrixScoreApi implements ScoreApi {
             return new GradePointAverage(Double.parseDouble(allGPA), Double.parseDouble(requiredGPA));
         } catch (Exception e) {
             Logger.getLogger("MatrixScoreApi.getGradePointAverage => ").log(Level.SEVERE, "allGPA: " + allGPA + "requiredGPA: " + requiredGPA);
-            throw new RuntimeException(e);
+            throw e;
         }
     }
 
@@ -50,7 +50,7 @@ public class MatrixScoreApi implements ScoreApi {
         } catch (Exception e) {
             if (scores != null)
                 Logger.getLogger("MatrixScoreApi.getScore => ").log(Level.SEVERE, scores.toString());
-            throw new RuntimeException(e);
+            throw e;
         }
     }
 

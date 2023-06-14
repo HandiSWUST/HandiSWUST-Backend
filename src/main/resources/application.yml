@@ -21,7 +21,7 @@ swust:
   start-time: 6
   api:
     breaker:
-      threshold: 20
+      threshold: 3
       break-millisecond: 120000
       circle: 60000
 

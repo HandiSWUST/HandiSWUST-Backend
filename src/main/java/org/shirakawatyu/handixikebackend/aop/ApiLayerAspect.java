@@ -1,5 +1,7 @@
 package org.shirakawatyu.handixikebackend.aop;
 
+import org.apache.hc.client5.http.HttpHostConnectException;
+import org.apache.hc.core5.http.ConnectionRequestTimeoutException;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -17,7 +19,7 @@ import java.util.logging.Logger;
 @Aspect
 @Component
 public class ApiLayerAspect {
-    private final HashMap<String, Count> timeoutCounts = new HashMap<>();
+    private final HashMap<String, Count> errorCounts = new HashMap<>();
     private final HashMap<String, Long> breakTime = new HashMap<>();
     @Value("${swust.api.breaker.threshold:20}")
     private int THRESHOLD;    // 超时阈值，单位：次
@@ -31,7 +33,7 @@ public class ApiLayerAspect {
     @Around("exception()")
     public Object around(ProceedingJoinPoint point) {
         String method = point.getSignature().toShortString();
-        Count cnt = timeoutCounts.get(method);
+        Count cnt = errorCounts.get(method);
         Long time = breakTime.get(method);
         if (time != null) {
             if (System.currentTimeMillis() - time < BREAK_MILLISECOND) {
@@ -42,7 +44,7 @@ public class ApiLayerAspect {
         }
         if (cnt == null) {
             cnt = new Count(0, System.currentTimeMillis());
-            timeoutCounts.put(method, cnt);
+            errorCounts.put(method, cnt);
         } else if (System.currentTimeMillis() > cnt.lastCountTime + CIRCLE) {
             cnt.times = 0;
             cnt.lastCountTime = System.currentTimeMillis();
@@ -58,13 +60,19 @@ public class ApiLayerAspect {
         } catch (ResourceAccessException e) {
             Throwable rootCause = e.getRootCause();
             if (rootCause instanceof HttpServerErrorException.GatewayTimeout |
-                    rootCause instanceof SocketTimeoutException) {
+                    rootCause instanceof SocketTimeoutException |
+                    (rootCause instanceof HttpHostConnectException && rootCause.getMessage().contains("timed out")) |
+                    rootCause instanceof ConnectionRequestTimeoutException) {
                 cnt.times++;
                 Logger.getLogger("ApiLayerAspect => ").log(Level.WARNING, "Timeout: " + method + " " + cnt.times);
                 throw new CircuitBreakerException();
             } else {
                 throw new RuntimeException(e);
             }
+        } catch (HttpServerErrorException.BadGateway e) {
+            cnt.times++;
+            Logger.getLogger("ApiLayerAspect => ").log(Level.WARNING, "Bad Gateway: " + method + " " + cnt.times);
+            throw new CircuitBreakerException();
         } catch (Throwable e) {
             throw new RuntimeException(e);
         }

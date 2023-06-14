@@ -66,7 +66,7 @@ public class LibraryApiImpl implements LibraryApi {
             }
         } catch (Exception e){
             logger.log(Level.WARNING,"查询借阅图书错误，有可能是第一次官网验证不通过，比较玄学，如果该报错出现好几次就是接口寄了");
-            e.printStackTrace();
+            throw e;
         }
         return books;
     }
