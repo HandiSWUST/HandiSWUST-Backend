@@ -53,7 +53,7 @@ public class ApiLayerAspect {
             breakTime.put(method, System.currentTimeMillis());
             cnt.times = 0;
             cnt.lastCountTime = System.currentTimeMillis();
-            Logger.getLogger("ApiLayerAspect => ").log(Level.WARNING, method + " 错误次数过多，触发熔断 " + BREAK_MILLISECOND + "ms");
+            Logger.getLogger("ApiLayerAspect => ").log(Level.WARNING, method + " 请求错误次数过多，触发熔断 " + BREAK_MILLISECOND + "ms");
             throw new CircuitBreakerException();
         }
         try {
