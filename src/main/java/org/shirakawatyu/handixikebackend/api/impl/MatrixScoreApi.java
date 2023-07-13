@@ -3,6 +3,7 @@ package org.shirakawatyu.handixikebackend.api.impl;
 import org.jsoup.Jsoup;
 import org.shirakawatyu.handixikebackend.api.ScoreApi;
 import org.shirakawatyu.handixikebackend.pojo.GradePointAverage;
+import org.shirakawatyu.handixikebackend.pojo.Score;
 import org.shirakawatyu.handixikebackend.utils.Requests;
 import org.shirakawatyu.handixikebackend.utils.ScoreUtils;
 import org.springframework.http.ResponseEntity;
@@ -38,7 +39,7 @@ public class MatrixScoreApi implements ScoreApi {
     }
 
     @Override
-    public LinkedHashMap<String, ArrayList<Object>> getScore(RestTemplate restTemplate) {
+    public LinkedHashMap<String, ArrayList<Score>> getScore(RestTemplate restTemplate) {
         List<String> scores = null;
         try {
             Requests.get( scoreUrl + "?event=studentPortal:DEFAULT_EVENT", "", restTemplate);
@@ -54,9 +55,9 @@ public class MatrixScoreApi implements ScoreApi {
         }
     }
 
-    private LinkedHashMap<String, ArrayList<Object>> processScore(List<String> scoreStings) {
+    private LinkedHashMap<String, ArrayList<Score>> processScore(List<String> scoreStings) {
         Queue<String> scores = new LinkedList<>(scoreStings);
-        LinkedHashMap<String, ArrayList<Object>> hashMap = new LinkedHashMap<>();
+        LinkedHashMap<String, ArrayList<Score>> hashMap = new LinkedHashMap<>();
         ScoreUtils.requiredScoreFilter(scores, hashMap);
         ScoreUtils.optionalScoreFilter(scores, hashMap);
         ScoreUtils.cetScoreFilter(scores, hashMap);

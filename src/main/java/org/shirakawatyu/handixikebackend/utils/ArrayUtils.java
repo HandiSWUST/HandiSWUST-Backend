@@ -9,13 +9,13 @@ import java.util.List;
 public class ArrayUtils {
 
     // 固定添加至倒数第二项
-    public static void addSecondLast(ArrayList<Object> arrayList, Object o) {
+    public static <T> void addSecondLast(ArrayList<T> arrayList, T o) {
         int lastIndex = arrayList.size() - 1 ;
         if (lastIndex < 0) {
             arrayList.add(o);
             return;
         }
-        Object last = arrayList.get(lastIndex);
+        T last = arrayList.get(lastIndex);
         arrayList.remove(lastIndex);
         arrayList.add(o);
         arrayList.add(last);

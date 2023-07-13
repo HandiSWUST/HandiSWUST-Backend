@@ -9,11 +9,13 @@ import org.shirakawatyu.handixikebackend.api.ScoreApi;
 import org.shirakawatyu.handixikebackend.common.Result;
 import org.shirakawatyu.handixikebackend.common.ResultCode;
 import org.shirakawatyu.handixikebackend.pojo.GradePointAverage;
+import org.shirakawatyu.handixikebackend.pojo.Score;
 import org.shirakawatyu.handixikebackend.service.ScoreService;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 
 @Service
@@ -25,12 +27,11 @@ public class ScoreServiceImpl implements ScoreService {
     @Override
     public Result getScore(HttpSession session) {
         RestTemplate restTemplate = (RestTemplate) session.getAttribute("template");
-        LinkedHashMap<String, ArrayList<Object>> score = scoreApi.getScore(restTemplate);
-        if (score != null) {
-            return Result.ok().data(JSON.toJSONString(score));
-        } else {
+        LinkedHashMap<String, ArrayList<Score>> score = scoreApi.getScore(restTemplate);
+        if (score == null) {
             return Result.fail().code(ResultCode.LOGOUT).msg("LOGOUT");
         }
+        return Result.ok().data(JSON.toJSONString(score));
     }
 
     @Override

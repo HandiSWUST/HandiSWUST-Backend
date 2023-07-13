@@ -13,7 +13,7 @@ public class ScoreUtils {
      * @param target 要放入成绩的map
      * @author ShirakawaTyu
      */
-    public static void requiredScoreFilter(Queue<String> scores, LinkedHashMap<String, ArrayList<Object>> target) {
+    public static void requiredScoreFilter(Queue<String> scores, LinkedHashMap<String, ArrayList<Score>> target) {
         String next;
         if (!scores.isEmpty() && scores.peek().contains("学年"))
             next = scores.poll();
@@ -22,7 +22,7 @@ public class ScoreUtils {
         while (!scores.isEmpty()) {
             String term = scores.poll();
             while (term.equals("春") || term.equals("秋")) {
-                ArrayList<Object> scoreList = new ArrayList<>();
+                ArrayList<Score> scoreList = new ArrayList<>();
                 String title1, course;
                 if (term.equals("秋"))
                     title1 = next.split(" ")[0] + "-1";
@@ -65,7 +65,7 @@ public class ScoreUtils {
      * @param target 要放入成绩的map
      * @author ShirakawaTyu
      */
-    public static void optionalScoreFilter(Queue<String> scores, LinkedHashMap<String, ArrayList<Object>> target) {
+    public static void optionalScoreFilter(Queue<String> scores, LinkedHashMap<String, ArrayList<Score>> target) {
         String next;
         if (!scores.isEmpty() && scores.peek().equals("学期 课程 课程号 学分 正考 补考 绩点"))
             scores.poll();
@@ -76,7 +76,7 @@ public class ScoreUtils {
                 next = scores.poll();
                 if (next.contains("已获得学分")) break;
                 String[] s = next.split(" ");
-                ArrayList<Object> scoreList = target.computeIfAbsent(s[0], k -> new ArrayList<>());
+                ArrayList<Score> scoreList = target.computeIfAbsent(s[0], k -> new ArrayList<>());
                 if (s.length == 6) {
                     ArrayUtils.addSecondLast(scoreList, new Score(s[1], s[3], "其他", s[4]));
                 } else if (s.length == 7) {
@@ -96,12 +96,12 @@ public class ScoreUtils {
      * @param target 要放入成绩的map
      * @author ShirakawaTyu
      */
-    public static void cetScoreFilter(Queue<String> scores, LinkedHashMap<String, ArrayList<Object>> target) {
+    public static void cetScoreFilter(Queue<String> scores, LinkedHashMap<String, ArrayList<Score>> target) {
         if (!scores.isEmpty() && scores.peek().equals("准考证号 考试场次 语言级别 总分 听力 阅读 写作 综合"))
             scores.poll();
         else
             return;
-        ArrayList<Object> objects = new ArrayList<>();
+        ArrayList<Score> objects = new ArrayList<>();
         while (!scores.isEmpty() && (scores.peek().contains("CET") || scores.peek().contains("CJT"))) {
             String[] s = scores.poll().split(" ");
             objects.add(new Score(s[4], "0", "其他", s[5]));

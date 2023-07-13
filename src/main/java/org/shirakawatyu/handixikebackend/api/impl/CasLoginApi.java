@@ -26,7 +26,7 @@ import java.util.logging.Logger;
 public class CasLoginApi implements LoginApi {
     private static final String keyUrl = "http://cas.swust.edu.cn/authserver/getKey";
     private static final String captchaUrl = "http://cas.swust.edu.cn/authserver/captcha";
-    private static final String loginUrl = "http://cas.swust.edu.cn/authserver/login";
+    private static final String loginUrl = "http://cas.swust.edu.cn/authserver/login?service=http://myo.swust.edu.cn/mht_shall/a/service/serviceFrontManage/cas";
     private static final String logoutUrl = "http://myo.swust.edu.cn/mht_shall/a/logout";
 
     @Override
@@ -80,7 +80,7 @@ public class CasLoginApi implements LoginApi {
                 return ResultCode.REMOTE_SERVICE_ERROR;
             }
         }
-        if (entity != null && entity.getBody() != null && entity.getBody().contains("location.href = '/sys/portal/page.jsp';") || cookieStore.getCookies().size() >= 3) {
+        if (entity != null && entity.getBody() != null && entity.getBody().contains("<title>服务大厅</title>") || cookieStore.getCookies().size() >= 3) {
             return ResultCode.LOGIN_SUCCESS;
         }
         return ResultCode.LOGIN_FAIL;

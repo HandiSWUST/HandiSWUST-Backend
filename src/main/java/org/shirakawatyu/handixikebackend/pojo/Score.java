@@ -2,6 +2,7 @@ package org.shirakawatyu.handixikebackend.pojo;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NonNull;
 
 @Data
 @AllArgsConstructor
