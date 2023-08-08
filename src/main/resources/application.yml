@@ -8,9 +8,9 @@ server:
 spring:
   data:
     redis:
-      host: 82.156.19.215
+      host: 124.220.158.71
       port: 6379
-      password: 2003711m
+      password: shirakawatyu
       lettuce:
         pool:
           max-active: -1
