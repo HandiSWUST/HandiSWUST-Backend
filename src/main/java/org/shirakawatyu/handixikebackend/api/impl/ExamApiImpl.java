@@ -12,10 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -59,10 +56,11 @@ public class ExamApiImpl implements ExamApi {
             ResponseEntity<String> doc = Requests.get("https://matrix.dean.swust.edu.cn/acadmicManager/index.cfm?event=studentPortal:examTable", "", restTemplate);
             String info = Jsoup.parse(Objects.requireNonNull(doc.getBody())).getElementsByTag("td").text();
             String[] s = info.split(" ");
-            if(s[0].equals("")) {
-                log.log(Level.WARNING,"教务系统寄了");
-                return "sys err";
-            }
+//            System.out.println(Arrays.toString(s));
+//            if(s[0].equals("")) {
+//                log.log(Level.WARNING,"教务系统寄了");
+//                return "sys err";
+//            }
             if (s.length<9) return "no data";
             return setExamList(s);
         } catch (Exception e){

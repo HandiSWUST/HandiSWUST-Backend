@@ -16,6 +16,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -48,6 +49,7 @@ public class LibraryApiImpl implements LibraryApi {
 
             String text = tr.text();
             String[] s = text.split(" ");
+            System.out.println(Arrays.toString(s));
 
 
             Library library = new Library();
@@ -56,7 +58,8 @@ public class LibraryApiImpl implements LibraryApi {
                     library.setBookName(s[i-1]);
                 }
 
-                if(s[i].contains("著")){
+                if(s[i].contains("著")||s[i].contains("主编")){
+                    while(!s[i+1].contains("-"))i++;
                     library.setBorrowTime(s[i+1]);
                     library.setExpire(s[i+2]);
                     library.setLocation(s[i+4]);
@@ -68,6 +71,8 @@ public class LibraryApiImpl implements LibraryApi {
             logger.log(Level.WARNING,"查询借阅图书错误，有可能是第一次官网验证不通过，比较玄学，如果该报错出现好几次就是接口寄了");
             throw e;
         }
+        System.out.println();
+        System.out.println(books);
         return books;
     }
 
