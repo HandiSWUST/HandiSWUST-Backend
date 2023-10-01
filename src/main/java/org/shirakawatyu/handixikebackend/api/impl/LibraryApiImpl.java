@@ -33,7 +33,7 @@ public class LibraryApiImpl implements LibraryApi {
             Requests.get("http://202.115.162.45:8080/opac/search_adv.php", "", restTemplate);
             List<Cookie> cookiesStore = cookieStore.getCookies();
             for (Cookie cookie : cookiesStore) {
-                if (cookie.getName().equals("PHPSESSID")) {
+                if ("PHPSESSID".equals(cookie.getName())) {
                     session.setAttribute("token", new String[]{"PHPSESSID", cookie.getValue()});//用于以后查询图书
                 }
             }
@@ -59,7 +59,9 @@ public class LibraryApiImpl implements LibraryApi {
                 }
 
                 if(s[i].contains("著")||s[i].contains("主编")){
-                    while(!s[i+1].contains("-"))i++;
+                    while(!s[i+1].contains("-")) {
+                        i++;
+                    }
                     library.setBorrowTime(s[i+1]);
                     library.setExpire(s[i+2]);
                     library.setLocation(s[i+4]);
@@ -69,10 +71,9 @@ public class LibraryApiImpl implements LibraryApi {
             }
         } catch (Exception e){
             logger.log(Level.WARNING,"查询借阅图书错误，有可能是第一次官网验证不通过，比较玄学，如果该报错出现好几次就是接口寄了");
+            logger.log(Level.WARNING, books.toString());
             throw e;
         }
-        System.out.println();
-        System.out.println(books);
         return books;
     }
 

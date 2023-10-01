@@ -91,4 +91,10 @@ public class CasLoginApi implements LoginApi {
         Requests.get(logoutUrl, "http://myo.swust.edu.cn/mht_shall/a/service/serviceFrontManage", restTemplate);
         return true;
     }
+
+    @Override
+    public boolean loginCheck(RestTemplate template) {
+        ResponseEntity<String> entity = Requests.get("http://myo.swust.edu.cn/mht_shall/a/service/serviceFrontManage", "", template);
+        return entity.getBody().contains("<title>服务大厅</title>");
+    }
 }

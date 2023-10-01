@@ -10,10 +10,11 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class MvcConfig implements WebMvcConfigurer {
     @Autowired
     TimeInterceptor timeInterceptor;
+    @Autowired
+    LoginInterceptor loginInterceptor;
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        HandlerInterceptor interceptor = new LoginInterceptor();
-        registry.addInterceptor(interceptor)
+        registry.addInterceptor(loginInterceptor)
                 .excludePathPatterns("/api/v2/login/**")
                 .excludePathPatterns("/api/gethitokoto")
                 .excludePathPatterns("/api/count")

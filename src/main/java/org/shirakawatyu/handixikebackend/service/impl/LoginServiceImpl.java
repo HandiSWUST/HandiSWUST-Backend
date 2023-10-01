@@ -9,6 +9,7 @@ import org.shirakawatyu.handixikebackend.common.Result;
 import org.shirakawatyu.handixikebackend.common.ResultCode;
 import org.shirakawatyu.handixikebackend.config.InitRestTemplate;
 import org.shirakawatyu.handixikebackend.service.LoginService;
+import org.shirakawatyu.handixikebackend.utils.Requests;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -19,9 +20,10 @@ import java.util.Base64;
 import java.util.Date;
 import java.util.Map;
 
+
 @Service
 public class LoginServiceImpl implements LoginService {
-    @Resource(name="CasLoginApi")
+    @Resource(name = "CasLoginApi")
     LoginApi casLoginApi;
 
     @Autowired
@@ -29,7 +31,7 @@ public class LoginServiceImpl implements LoginService {
 
     @Override
     public Result getKey(HttpSession session) {
-        RestTemplate restTemplate =(RestTemplate)session.getAttribute("template");
+        RestTemplate restTemplate = (RestTemplate) session.getAttribute("template");
         if (restTemplate == null) {
             return null;
         }
@@ -41,8 +43,8 @@ public class LoginServiceImpl implements LoginService {
     public Result getCaptcha(HttpSession session) {
         BasicCookieStore cookieStore = new BasicCookieStore();
         RestTemplate restTemplate = InitRestTemplate.init(cookieStore);
-        session.setAttribute("template",restTemplate);
-        session.setAttribute("cookieStore",cookieStore);
+        session.setAttribute("template", restTemplate);
+        session.setAttribute("cookieStore", cookieStore);
         byte[] captcha = casLoginApi.getCaptcha(restTemplate);
         return Result.ok().data(Base64.getEncoder().encodeToString(captcha));
     }
@@ -50,9 +52,9 @@ public class LoginServiceImpl implements LoginService {
 
     @Override
     public Result login(String username, String password, String captcha, HttpSession session) {
-        RestTemplate restTemplate =(RestTemplate)session.getAttribute("template");
-        CookieStore cookieStore = (CookieStore)session.getAttribute("cookieStore");
-        if(restTemplate == null) {
+        RestTemplate restTemplate = (RestTemplate) session.getAttribute("template");
+        CookieStore cookieStore = (CookieStore) session.getAttribute("cookieStore");
+        if (restTemplate == null) {
             return null;
         }
         int result = casLoginApi.login(username, password, captcha, cookieStore, restTemplate);
@@ -67,26 +69,34 @@ public class LoginServiceImpl implements LoginService {
             redisTemplate.opsForHyperLogLog().add("DAU:" + new SimpleDateFormat("yyyy-MM-dd").format(new Date()), username);
             return Result.ok().code(ResultCode.LOGIN_SUCCESS).msg("LOGIN SUCCESS");
         } else if (result == ResultCode.REMOTE_SERVICE_ERROR) {
-            Result.fail().code(ResultCode.REMOTE_SERVICE_ERROR).msg("REMOTE SERVICE ERROR");
+            removeSession(session);
+            return Result.fail().code(ResultCode.REMOTE_SERVICE_ERROR).msg("REMOTE SERVICE ERROR");
         }
+        removeSession(session);
         return Result.fail().code(ResultCode.LOGIN_FAIL).msg("LOGIN FAIL");
     }
 
     @Override
     public Result logout(HttpSession session) {
-        RestTemplate restTemplate =(RestTemplate)session.getAttribute("template");
+        RestTemplate restTemplate = (RestTemplate) session.getAttribute("template");
         casLoginApi.logout(restTemplate);
-        session.removeAttribute("status");
-        session.removeAttribute("template");
-        session.removeAttribute("cookieStore");
+        removeSession(session);
         return Result.ok().code(ResultCode.LOGOUT_SUCCESS).msg("LOGOUT SUCCESS");
     }
 
-
+    @Override
     public Result loginCheck(HttpSession session) {
-        if (session.getAttribute("status") == null) {
+        RestTemplate restTemplate = (RestTemplate) session.getAttribute("template");
+        if (session.getAttribute("status") == null || restTemplate == null) {
             return Result.ok().code(ResultCode.LOGOUT).msg("LOGOUT");
         }
         return Result.ok().code(ResultCode.HAS_LOGIN).msg("LOGIN");
+    }
+
+    private void removeSession(HttpSession session) {
+        session.removeAttribute("status");
+        session.removeAttribute("template");
+        session.removeAttribute("cookieStore");
+        session.removeAttribute("no");
     }
 }

@@ -1,18 +1,18 @@
 package org.shirakawatyu.handixikebackend.api.impl;
 
-import cn.hutool.json.JSONUtil;
 import com.alibaba.fastjson2.JSONObject;
-import jakarta.servlet.http.HttpSession;
 import org.jsoup.Jsoup;
 import org.shirakawatyu.handixikebackend.api.ExamApi;
-import org.shirakawatyu.handixikebackend.common.Result;
 import org.shirakawatyu.handixikebackend.pojo.Exam;
 import org.shirakawatyu.handixikebackend.utils.Requests;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -26,7 +26,7 @@ public class ExamApiImpl implements ExamApi {
         int examNum = (strings.length-8)/9;
         for(int p =0;p<examNum;p++){
             int aid = 8+p*9;
-            if(strings[aid].equals("")){
+            if("".equals(strings[aid])){
                 ArrayList<Exam> re = new ArrayList<>();
                 int start = aid + 1;
                 int reNum = (strings.length - 8 - start)/9;
@@ -61,7 +61,9 @@ public class ExamApiImpl implements ExamApi {
 //                log.log(Level.WARNING,"教务系统寄了");
 //                return "sys err";
 //            }
-            if (s.length<9) return "no data";
+            if (s.length<9) {
+                return "no data";
+            }
             return setExamList(s);
         } catch (Exception e){
             log.log(Level.SEVERE,"可能是登录凭证过期了，八成不会出这个问题");

@@ -1,8 +1,11 @@
 package org.shirakawatyu.handixikebackend.cache.impl;
 
+import com.alibaba.fastjson2.JSONException;
 import jakarta.annotation.Resource;
 import org.shirakawatyu.handixikebackend.api.CourseApi;
 import org.shirakawatyu.handixikebackend.cache.RawCourseCache;
+import org.shirakawatyu.handixikebackend.common.Result;
+import org.shirakawatyu.handixikebackend.common.ResultCode;
 import org.shirakawatyu.handixikebackend.pojo.Lesson;
 import org.shirakawatyu.handixikebackend.utils.ArrayUtils;
 import org.springframework.cache.annotation.CacheEvict;

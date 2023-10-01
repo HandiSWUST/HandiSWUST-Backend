@@ -26,7 +26,7 @@ public class CourseServiceImpl implements CourseService {
     public Result course(HttpSession session, String no) {
         List<Lesson> lessonList = rawCourse.getRawCourse((RestTemplate) session.getAttribute("template"), no);
         JSONArray lessonsArray = new JSONArray(lessonList);
-        if(lessonsArray.size() > 0) {
+        if (!lessonsArray.isEmpty()) {
             return Result.ok().data(lessonsArray.toJSONString());
         }
         return Result.fail();

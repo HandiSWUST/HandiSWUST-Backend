@@ -50,7 +50,7 @@ public class ExperimentCourseApi implements CourseApi {
             try {
                 parse = Jsoup.parse(Objects.requireNonNull(experiments.getBody()));
             }catch (Exception e) {
-                logger.log(Level.SEVERE, "实验课表获取失败");
+                logger.log(Level.SEVERE, "实验课表获取失败: " + experiments);
                 return null;
             }
             Elements tabson = parse.getElementsByClass("tabson");

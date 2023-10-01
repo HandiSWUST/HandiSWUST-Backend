@@ -30,7 +30,9 @@ public class ExamServiceImpl implements ExamService {
     public Result getExam(HttpSession session) {
         RestTemplate restTemplate = Requests.getRestTemplate(session);
         String exam = examApi.getExam(restTemplate);
-        if(JSONUtil.isTypeJSON(exam))return Result.ok().data(exam);
+        if(JSONUtil.isTypeJSON(exam)) {
+            return Result.ok().data(exam);
+        }
         return Result.fail().msg(exam);
     }
 }

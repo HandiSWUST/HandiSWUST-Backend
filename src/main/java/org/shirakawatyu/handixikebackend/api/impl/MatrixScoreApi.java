@@ -26,8 +26,9 @@ public class MatrixScoreApi implements ScoreApi {
             Requests.get( scoreUrl + "?event=studentPortal:DEFAULT_EVENT", "", restTemplate);
             ResponseEntity<String> responseEntity1 = Requests.get(scoreUrl + "?event=studentProfile:courseMark", "", restTemplate);
             List<String> list = Jsoup.parse(Objects.requireNonNull(responseEntity1.getBody())).getElementsByClass("boxNavigation").eachText();
-            if (list.size() == 0)
+            if (list.size() == 0) {
                 return null;
+            }
             String[] s = list.get(1).split(" ");
             allGPA = s[0].replace("平均绩点", "");
             requiredGPA = s[1].replace("必修课绩点", "");
@@ -45,12 +46,14 @@ public class MatrixScoreApi implements ScoreApi {
             Requests.get( scoreUrl + "?event=studentPortal:DEFAULT_EVENT", "", restTemplate);
             ResponseEntity<String> responseEntity1 = Requests.get(scoreUrl + "?event=studentProfile:courseMark", "", restTemplate);
             scores = Jsoup.parse(responseEntity1.getBody()).getElementsByClass("UItable").select("tr").eachText();
-            if (scores.size() == 0)
+            if (scores.size() == 0) {
                 return null;
+            }
             return processScore(scores);
         } catch (Exception e) {
-            if (scores != null)
+            if (scores != null) {
                 Logger.getLogger("MatrixScoreApi.getScore => ").log(Level.SEVERE, scores.toString());
+            }
             throw e;
         }
     }
@@ -61,10 +64,12 @@ public class MatrixScoreApi implements ScoreApi {
         ScoreUtils.requiredScoreFilter(scores, hashMap);
         ScoreUtils.optionalScoreFilter(scores, hashMap);
         ScoreUtils.cetScoreFilter(scores, hashMap);
-        if (hashMap.size() == 0)
+        if (hashMap.size() == 0) {
             return null;
-        if (!scores.isEmpty())
+        }
+        if (!scores.isEmpty()) {
             Logger.getLogger("MatrixScoreApi.processScore => ").log(Level.WARNING, scores.toString());
+        }
         return hashMap;
     }
 }
