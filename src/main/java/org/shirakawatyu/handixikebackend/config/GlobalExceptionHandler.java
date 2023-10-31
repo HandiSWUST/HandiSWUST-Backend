@@ -3,6 +3,7 @@ package org.shirakawatyu.handixikebackend.config;
 import org.shirakawatyu.handixikebackend.aop.ApiLayerAspect;
 import org.shirakawatyu.handixikebackend.common.Result;
 import org.shirakawatyu.handixikebackend.common.ResultCode;
+import org.shirakawatyu.handixikebackend.exception.NotLoginException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -12,6 +13,9 @@ import java.net.SocketTimeoutException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * @author ShirakawaTyu
+ */
 @ControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler(value = SocketTimeoutException.class)
@@ -44,5 +48,10 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = ApiLayerAspect.CircuitBreakerException.class)
     public Result CircuitBreakerExceptionHandler() {
         return Result.fail().code(ResultCode.TIMEOUT).msg("TIMEOUT");
+    }
+
+    @ExceptionHandler(value = NotLoginException.class)
+    public Result NotLoginExceptionHandler() {
+        return Result.fail().code(ResultCode.LOGOUT).msg("LOGOUT");
     }
 }

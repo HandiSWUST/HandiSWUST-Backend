@@ -15,6 +15,9 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
+/**
+ * @author ShirakawaTyu
+ */
 @Service
 public class CourseServiceImpl implements CourseService {
 

@@ -17,6 +17,9 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * @author ShirakawaTyu
+ */
 @Component("NormalCourseApi")
 public class NormalCourseApi implements CourseApi {
     private static final String baseUrl = "http://sjjx.swust.edu.cn";
@@ -39,7 +42,7 @@ public class NormalCourseApi implements CourseApi {
             lessonsArray = JSON.parseArray(lessons, Lesson.class);
         } catch (JSONException e) {
             Logger.getLogger("At NormalCourseApi JSONException => ").log(Level.WARNING, "错误JSON字符串：" + lessons);
-            return null;
+            throw e;
         }
         return lessonsArray;
     }

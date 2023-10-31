@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpSession;
 import org.shirakawatyu.handixikebackend.api.ScoreApi;
 import org.shirakawatyu.handixikebackend.common.Result;
 import org.shirakawatyu.handixikebackend.common.ResultCode;
+import org.shirakawatyu.handixikebackend.exception.NotLoginException;
 import org.shirakawatyu.handixikebackend.pojo.GradePointAverage;
 import org.shirakawatyu.handixikebackend.pojo.Score;
 import org.shirakawatyu.handixikebackend.service.ScoreService;
@@ -29,7 +30,7 @@ public class ScoreServiceImpl implements ScoreService {
         RestTemplate restTemplate = (RestTemplate) session.getAttribute("template");
         LinkedHashMap<String, ArrayList<Score>> score = scoreApi.getScore(restTemplate);
         if (score == null) {
-            return Result.fail().code(ResultCode.LOGOUT).msg("LOGOUT");
+            throw new NotLoginException();
         }
         return Result.ok().data(JSON.toJSONString(score));
     }
@@ -43,7 +44,7 @@ public class ScoreServiceImpl implements ScoreService {
             result.put("gpa", gradePointAverage);
             return Result.ok().data(JSON.toJSONString(result));
         } else {
-            return Result.fail().code(ResultCode.LOGOUT).msg("LOGOUT");
+            throw new NotLoginException();
         }
     }
 

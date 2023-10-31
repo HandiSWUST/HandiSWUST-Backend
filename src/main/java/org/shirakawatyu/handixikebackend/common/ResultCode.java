@@ -1,5 +1,8 @@
 package org.shirakawatyu.handixikebackend.common;
 
+/**
+ * @author ShirakawaTyu
+ */
 public interface ResultCode {
     // 认证相关
     int LOGIN_FAIL = 1500;

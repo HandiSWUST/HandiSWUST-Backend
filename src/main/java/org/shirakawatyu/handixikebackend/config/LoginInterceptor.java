@@ -9,6 +9,7 @@ import org.apache.coyote.Request;
 import org.shirakawatyu.handixikebackend.api.LoginApi;
 import org.shirakawatyu.handixikebackend.common.Result;
 import org.shirakawatyu.handixikebackend.common.ResultCode;
+import org.shirakawatyu.handixikebackend.exception.NotLoginException;
 import org.shirakawatyu.handixikebackend.utils.Requests;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -25,14 +26,17 @@ public class LoginInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         HttpSession session = request.getSession();
         RestTemplate template = (RestTemplate) session.getAttribute("template");
+        boolean loginStatus = true;
         try {
-            return loginApi.loginCheck(template);
+            loginStatus = loginApi.loginCheck(template);
         } catch (Exception e) {
             if (session.getAttribute("status") == null || template == null) {
-                response.getWriter().print(JSON.toJSONString(Result.ok().code(ResultCode.LOGOUT).msg("LOGOUT")));
-                return false;
+                loginStatus = false;
             }
         }
-        return true;
+        if (!loginStatus) {
+            response.getWriter().print(JSON.toJSONString(Result.ok().code(ResultCode.LOGOUT).msg("LOGOUT")));
+        }
+        return loginStatus;
     }
 }

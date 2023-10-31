@@ -8,7 +8,5 @@ import java.util.List;
 
 public interface RawCourseCache {
     List<Lesson> getRawCourse(RestTemplate restTemplate, String no);
-
-    @Scheduled(cron = "0 0 0 * * ? ")
     void deleteCache();
 }

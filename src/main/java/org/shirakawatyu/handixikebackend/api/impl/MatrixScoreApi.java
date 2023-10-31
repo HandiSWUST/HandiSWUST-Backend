@@ -8,12 +8,17 @@ import org.shirakawatyu.handixikebackend.utils.Requests;
 import org.shirakawatyu.handixikebackend.utils.ScoreUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * @author ShirakawaTyu
+ */
 @Component("MatrixScoreApi")
 public class MatrixScoreApi implements ScoreApi {
 
@@ -23,10 +28,12 @@ public class MatrixScoreApi implements ScoreApi {
     public GradePointAverage getGradePointAverage(RestTemplate restTemplate) {
         String allGPA = "", requiredGPA = "";
         try {
-            Requests.get( scoreUrl + "?event=studentPortal:DEFAULT_EVENT", "", restTemplate);
+            Requests.post(
+                    "http://cas.swust.edu.cn/authserver/login?service=" + scoreUrl + "?event=studentPortal:DEFAULT_EVENT",
+                    new LinkedMultiValueMap<>(), restTemplate);
             ResponseEntity<String> responseEntity1 = Requests.get(scoreUrl + "?event=studentProfile:courseMark", "", restTemplate);
             List<String> list = Jsoup.parse(Objects.requireNonNull(responseEntity1.getBody())).getElementsByClass("boxNavigation").eachText();
-            if (list.size() == 0) {
+            if (list.isEmpty()) {
                 return null;
             }
             String[] s = list.get(1).split(" ");
@@ -43,10 +50,12 @@ public class MatrixScoreApi implements ScoreApi {
     public LinkedHashMap<String, ArrayList<Score>> getScore(RestTemplate restTemplate) {
         List<String> scores = null;
         try {
-            Requests.get( scoreUrl + "?event=studentPortal:DEFAULT_EVENT", "", restTemplate);
+            Requests.post(
+                    "http://cas.swust.edu.cn/authserver/login?service=" + scoreUrl + "?event=studentPortal:DEFAULT_EVENT",
+                    new LinkedMultiValueMap<>(), restTemplate);
             ResponseEntity<String> responseEntity1 = Requests.get(scoreUrl + "?event=studentProfile:courseMark", "", restTemplate);
             scores = Jsoup.parse(responseEntity1.getBody()).getElementsByClass("UItable").select("tr").eachText();
-            if (scores.size() == 0) {
+            if (scores.isEmpty()) {
                 return null;
             }
             return processScore(scores);
@@ -64,7 +73,7 @@ public class MatrixScoreApi implements ScoreApi {
         ScoreUtils.requiredScoreFilter(scores, hashMap);
         ScoreUtils.optionalScoreFilter(scores, hashMap);
         ScoreUtils.cetScoreFilter(scores, hashMap);
-        if (hashMap.size() == 0) {
+        if (hashMap.isEmpty()) {
             return null;
         }
         if (!scores.isEmpty()) {

@@ -49,7 +49,7 @@ public class LibraryApiImpl implements LibraryApi {
 
             String text = tr.text();
             String[] s = text.split(" ");
-            System.out.println(Arrays.toString(s));
+//            System.out.println(Arrays.toString(s));
 
 
             Library library = new Library();

@@ -6,6 +6,7 @@ import org.shirakawatyu.handixikebackend.api.CourseApi;
 import org.shirakawatyu.handixikebackend.cache.RawCourseCache;
 import org.shirakawatyu.handixikebackend.common.Result;
 import org.shirakawatyu.handixikebackend.common.ResultCode;
+import org.shirakawatyu.handixikebackend.exception.NotLoginException;
 import org.shirakawatyu.handixikebackend.pojo.Lesson;
 import org.shirakawatyu.handixikebackend.utils.ArrayUtils;
 import org.springframework.cache.annotation.CacheEvict;
@@ -19,6 +20,9 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * @author ShirakawaTyu
+ */
 @Service
 public class RawCourseCacheImpl implements RawCourseCache {
     @Resource(name="NormalCourseApi")
@@ -30,14 +34,17 @@ public class RawCourseCacheImpl implements RawCourseCache {
     @Override
     public List<Lesson> getRawCourse(RestTemplate restTemplate, String no) {
         List<Lesson> lessonsArray = new ArrayList<>();
-        List<Lesson> normalCourse = normalCourseApi.getCourse(restTemplate);
-        List<Lesson> experimentCourse = experimentCourseApi.getCourse(restTemplate);
-        if (normalCourse == null || experimentCourse == null) {
-            return null;
+        List<Lesson> normalCourse;
+        List<Lesson> experimentCourse;
+        try {
+            normalCourse = normalCourseApi.getCourse(restTemplate);
+            experimentCourse = experimentCourseApi.getCourse(restTemplate);
+        } catch (Exception e) {
+            throw new NotLoginException();
         }
         lessonsArray.addAll(normalCourse);
         lessonsArray.addAll(experimentCourse);
-        if (lessonsArray.size() > 0) {
+        if (!lessonsArray.isEmpty()) {
             ArrayUtils.nullObjChk(lessonsArray);
             return lessonsArray;
         }

@@ -49,9 +49,9 @@ public class ExperimentCourseApi implements CourseApi {
             Document parse;
             try {
                 parse = Jsoup.parse(Objects.requireNonNull(experiments.getBody()));
-            }catch (Exception e) {
+            } catch (Exception e) {
                 logger.log(Level.SEVERE, "实验课表获取失败: " + experiments);
-                return null;
+                throw e;
             }
             Elements tabson = parse.getElementsByClass("tabson");
             Elements tbody = tabson.select("tbody");
