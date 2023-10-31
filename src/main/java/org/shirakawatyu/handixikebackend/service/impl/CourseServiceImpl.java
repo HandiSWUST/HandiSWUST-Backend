@@ -56,4 +56,12 @@ public class CourseServiceImpl implements CourseService {
         return Result.ok().data(LessonUtils.simpleSelectWeek(selectedWeek, JSONArray.parseArray(courseData, Lesson.class)));
     }
 
+    @Override
+    public Result manualDeleteCache(String no) {
+        boolean success = rawCourse.manualDeleteCache(no);
+        if (success) {
+            return Result.ok();
+        }
+        return Result.fail();
+    }
 }

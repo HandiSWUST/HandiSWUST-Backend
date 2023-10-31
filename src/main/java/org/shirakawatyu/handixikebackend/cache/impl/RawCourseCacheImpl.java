@@ -9,14 +9,18 @@ import org.shirakawatyu.handixikebackend.common.ResultCode;
 import org.shirakawatyu.handixikebackend.exception.NotLoginException;
 import org.shirakawatyu.handixikebackend.pojo.Lesson;
 import org.shirakawatyu.handixikebackend.utils.ArrayUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -29,6 +33,8 @@ public class RawCourseCacheImpl implements RawCourseCache {
     private CourseApi normalCourseApi;
     @Resource(name="ExperimentCourseApi")
     private CourseApi experimentCourseApi;
+    @Autowired
+    StringRedisTemplate redisTemplate;
 
     @Cacheable(value = "Course", key = "'r'+#p1", unless = "null == #result")
     @Override
@@ -56,5 +62,18 @@ public class RawCourseCacheImpl implements RawCourseCache {
     @Override
     public void deleteCache() {
         Logger.getLogger("RawCourseCacheImpl => ").log(Level.INFO, "已清理缓存");
+    }
+
+    @Override
+    public boolean manualDeleteCache(String no) {
+        try {
+            Set<String> keys = redisTemplate.keys("*" + no + "*");
+            if (keys != null) {
+                redisTemplate.delete(keys);
+            }
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
     }
 }

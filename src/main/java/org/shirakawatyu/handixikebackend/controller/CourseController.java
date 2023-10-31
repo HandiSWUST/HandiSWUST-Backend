@@ -37,4 +37,10 @@ public class CourseController {
         return courseService.useLocalCourse(selectedWeek, courseData);
     }
 
+    @PostMapping("/api/v2/course/clear")
+    public Result deleteCache(HttpSession session) {
+        String no = (String) session.getAttribute("no");
+        return courseService.manualDeleteCache(no);
+    }
+
 }
