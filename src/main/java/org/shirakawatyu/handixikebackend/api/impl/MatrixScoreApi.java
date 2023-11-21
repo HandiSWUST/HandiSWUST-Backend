@@ -9,7 +9,6 @@ import org.shirakawatyu.handixikebackend.utils.ScoreUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
@@ -26,22 +25,27 @@ public class MatrixScoreApi implements ScoreApi {
 
     @Override
     public GradePointAverage getGradePointAverage(RestTemplate restTemplate) {
-        String allGPA = "", requiredGPA = "";
+        String allGPA = "", requiredGPA = "", resp = "";
         try {
             Requests.post(
                     "http://cas.swust.edu.cn/authserver/login?service=" + scoreUrl + "?event=studentPortal:DEFAULT_EVENT",
                     new LinkedMultiValueMap<>(), restTemplate);
             ResponseEntity<String> responseEntity1 = Requests.get(scoreUrl + "?event=studentProfile:courseMark", "", restTemplate);
-            List<String> list = Jsoup.parse(Objects.requireNonNull(responseEntity1.getBody())).getElementsByClass("boxNavigation").eachText();
+            resp = responseEntity1.getBody();
+            List<String> list = Jsoup.parse(Objects.requireNonNull(resp)).getElementsByClass("boxNavigation").eachText();
             if (list.isEmpty()) {
                 return null;
+            }
+            // 教务系统当前还没有你的成绩
+            if ("0".equals(list.get(0).split(" ")[0])) {
+                return new GradePointAverage(0, 0);
             }
             String[] s = list.get(1).split(" ");
             allGPA = s[0].replace("平均绩点", "");
             requiredGPA = s[1].replace("必修课绩点", "");
             return new GradePointAverage(Double.parseDouble(allGPA), Double.parseDouble(requiredGPA));
         } catch (Exception e) {
-            Logger.getLogger("MatrixScoreApi.getGradePointAverage => ").log(Level.SEVERE, "allGPA: " + allGPA + "requiredGPA: " + requiredGPA);
+            Logger.getLogger("MatrixScoreApi.getGradePointAverage => ").log(Level.SEVERE, resp);
             throw e;
         }
     }
@@ -49,19 +53,21 @@ public class MatrixScoreApi implements ScoreApi {
     @Override
     public LinkedHashMap<String, ArrayList<Score>> getScore(RestTemplate restTemplate) {
         List<String> scores = null;
+        String resp = "";
         try {
             Requests.post(
                     "http://cas.swust.edu.cn/authserver/login?service=" + scoreUrl + "?event=studentPortal:DEFAULT_EVENT",
                     new LinkedMultiValueMap<>(), restTemplate);
             ResponseEntity<String> responseEntity1 = Requests.get(scoreUrl + "?event=studentProfile:courseMark", "", restTemplate);
-            scores = Jsoup.parse(responseEntity1.getBody()).getElementsByClass("UItable").select("tr").eachText();
+            resp = responseEntity1.getBody();
+            scores = Jsoup.parse(resp).getElementsByClass("UItable").select("tr").eachText();
             if (scores.isEmpty()) {
                 return null;
             }
             return processScore(scores);
         } catch (Exception e) {
             if (scores != null) {
-                Logger.getLogger("MatrixScoreApi.getScore => ").log(Level.SEVERE, scores.toString());
+                Logger.getLogger("MatrixScoreApi.getScore => ").log(Level.SEVERE, resp);
             }
             throw e;
         }

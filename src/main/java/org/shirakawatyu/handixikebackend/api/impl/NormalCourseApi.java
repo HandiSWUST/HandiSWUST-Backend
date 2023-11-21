@@ -3,6 +3,7 @@ package org.shirakawatyu.handixikebackend.api.impl;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONException;
 import org.shirakawatyu.handixikebackend.api.CourseApi;
+import org.shirakawatyu.handixikebackend.exception.NotLoginException;
 import org.shirakawatyu.handixikebackend.pojo.Lesson;
 import org.shirakawatyu.handixikebackend.utils.DateUtil;
 import org.shirakawatyu.handixikebackend.utils.Requests;
@@ -36,13 +37,15 @@ public class NormalCourseApi implements CourseApi {
         ResponseEntity<String> entity = Requests.post(baseUrl + "/teachn/stutool", map, restTemplate);
 
         // 转码，不然会乱码
-        String lessons = new String(entity.getBody().getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
+        String body = entity.getBody();
+        String lessons = new String(body.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
         List<Lesson> lessonsArray;
         try {
             lessonsArray = JSON.parseArray(lessons, Lesson.class);
         } catch (JSONException e) {
-            Logger.getLogger("At NormalCourseApi JSONException => ").log(Level.WARNING, "错误JSON字符串：" + lessons);
-            throw e;
+            Logger.getLogger("At NormalCourseApi JSONException => ").log(Level.WARNING, "错误JSON字符串：" + body);
+            // 一般来说这个问题是由于登录过期引起的
+            throw new NotLoginException();
         }
         return lessonsArray;
     }
