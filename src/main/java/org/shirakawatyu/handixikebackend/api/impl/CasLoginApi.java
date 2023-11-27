@@ -29,7 +29,7 @@ import java.util.logging.Logger;
 public class CasLoginApi implements LoginApi {
     private static final String keyUrl = "http://cas.swust.edu.cn/authserver/getKey";
     private static final String captchaUrl = "http://cas.swust.edu.cn/authserver/captcha";
-    private static final String loginUrl = "http://cas.swust.edu.cn/authserver/login?service=https://matrix.dean.swust.edu.cn/acadmicManager/index.cfm?event=studentPortal:DEFAULT_EVENT";
+    private static final String loginUrl = "https://cas.swust.edu.cn/authserver/login?service=https://matrix.dean.swust.edu.cn/acadmicManager/index.cfm?event=studentPortal:DEFAULT_EVENT";
     private static final String logoutUrl = "http://myo.swust.edu.cn/mht_shall/a/logout";
 
     @Override
