@@ -7,4 +7,5 @@ public class Const {
     public static final long CURRENT_TERM_LONG = 202320242;    // 2023-2024-1
     public static final long START_DATE = DateUtil.getDate("2024-2-26");
     public static final long END_DATE = DateUtil.getDate("2024-7-14");
+    public static final String WEB_VERSION = "1.0";
 }
