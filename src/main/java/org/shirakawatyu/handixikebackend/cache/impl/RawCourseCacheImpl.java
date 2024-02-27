@@ -41,15 +41,18 @@ public class RawCourseCacheImpl implements RawCourseCache {
     public List<Lesson> getRawCourse(RestTemplate restTemplate, String no) {
         List<Lesson> lessonsArray = new ArrayList<>();
         List<Lesson> normalCourse;
-        List<Lesson> experimentCourse;
+        // 因为normal course api已经能拿到包括实验课的所有课了，先注释掉这行
+//        List<Lesson> experimentCourse;
         try {
             normalCourse = normalCourseApi.getCourse(restTemplate);
-            experimentCourse = experimentCourseApi.getCourse(restTemplate);
+            // 因为normal course api已经能拿到包括实验课的所有课了，先注释掉这行
+//            experimentCourse = experimentCourseApi.getCourse(restTemplate);
         } catch (Exception e) {
             throw new NotLoginException();
         }
         lessonsArray.addAll(normalCourse);
-        lessonsArray.addAll(experimentCourse);
+        // 因为normal course api已经能拿到包括实验课的所有课了，先注释掉这行
+//        lessonsArray.addAll(experimentCourse);
         if (!lessonsArray.isEmpty()) {
             ArrayUtils.nullObjChk(lessonsArray);
             return lessonsArray;
