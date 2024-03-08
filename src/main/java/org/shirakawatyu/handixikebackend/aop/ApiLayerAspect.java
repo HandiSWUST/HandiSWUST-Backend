@@ -12,11 +12,15 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.ResourceAccessException;
 
 import java.io.EOFException;
+import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * @author ShirakawaTyu
+ */
 @Aspect
 @Component
 public class ApiLayerAspect {
@@ -73,6 +77,10 @@ public class ApiLayerAspect {
         } catch (HttpServerErrorException.BadGateway e) {
             cnt.times++;
             Logger.getLogger("ApiLayerAspect => ").log(Level.WARNING, "Bad Gateway: " + method + " " + cnt.times);
+            throw new CircuitBreakerException();
+        } catch (SocketException e) {
+            cnt.times++;
+            Logger.getLogger("ApiLayerAspect => ").log(Level.WARNING, "Socket Exception: " + method + " " + cnt.times);
             throw new CircuitBreakerException();
         } catch (EOFException e) {
             if (e.getMessage().contains("SSL peer")) {

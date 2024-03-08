@@ -9,7 +9,6 @@ import org.shirakawatyu.handixikebackend.common.Result;
 import org.shirakawatyu.handixikebackend.common.ResultCode;
 import org.shirakawatyu.handixikebackend.config.InitRestTemplate;
 import org.shirakawatyu.handixikebackend.service.LoginService;
-import org.shirakawatyu.handixikebackend.utils.Requests;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -64,9 +63,12 @@ public class LoginServiceImpl implements LoginService {
             session.setAttribute("cookieStore", cookieStore);
             session.setAttribute("no", username);
             // 统计每日登录人次
-            redisTemplate.opsForHash().increment("count", new SimpleDateFormat("yyyy-MM-dd").format(new Date()), 1);
+            String format = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+            Thread.startVirtualThread(() -> redisTemplate.opsForHash().increment("count", format, 1));
+//            redisTemplate.opsForHash().increment("count", new SimpleDateFormat("yyyy-MM-dd").format(new Date()), 1);
             // 登录人数
-            redisTemplate.opsForHyperLogLog().add("DAU:" + new SimpleDateFormat("yyyy-MM-dd").format(new Date()), username);
+            Thread.startVirtualThread(() -> redisTemplate.opsForHyperLogLog().add("DAU:" + format, username));
+//            redisTemplate.opsForHyperLogLog().add("DAU:" + new SimpleDateFormat("yyyy-MM-dd").format(new Date()), username);
             return Result.ok().code(ResultCode.LOGIN_SUCCESS).msg("LOGIN SUCCESS");
         } else if (result == ResultCode.REMOTE_SERVICE_ERROR) {
             removeSession(session);
